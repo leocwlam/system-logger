@@ -1,6 +1,12 @@
 # simple-logger
 > Provide the basic logging mechanism.  It can be easy to inject the storage logic for those logging result.
 
+[![Build Status](https://travis-ci.org/leocwlam/simple-logger.svg?branch=master)](https://travis-ci.org/leocwlam/simple-logger)
+[![Coverage Status](https://coveralls.io/repos/github/leocwlam/simple-logger/badge.svg?branch=master)](https://coveralls.io/github/leocwlam/simple-logger?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/leocwlam/simple-logger/badge.svg?branch=master)](https://coveralls.io/github/leocwlam/simple-logger?branch=master)
+[![Dependency Status](https://david-dm.org/leocwlam/simple-logger.svg)](https://david-dm.org/leocwlam/simple-logger.svg)
+[![devDependency Status](https://david-dm.org/leocwlam/simple-logger/dev-status.svg)](https://david-dm.org/leocwlam/simple-logger#info=devDependencies)
+
 ## Usage
 ```js
 const logging = require('simple-logger');

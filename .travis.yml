@@ -1,1 +1,15 @@
-after_success: npm run coverage
+language: node_js
+
+directories:
+    - node_modules
+notifications:
+  email: false
+node_js:
+  - 'node'
+before_script:
+  - npm prune
+after_sucess:
+  - npm run semantic-release
+  - npm run coverage
+branches:
+  - /^v\d+\.\d+\.\d+$/

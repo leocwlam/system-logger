@@ -3,7 +3,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const logging = require('../simple-logger');
+const logging = require('../system-logger');
 
 const testHelper = require('./testHelper');
 

@@ -1,25 +1,24 @@
 {
-  "name": "simple-logger",
+  "name": "system-logger",
   "version": "0.0.0-development",
   "description": "> Provide the basic logging mechanism.  It can be easy to inject the storage logic for those logging result.",
   "main": "logging.js",
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha tests",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "travis-deploy-once": "travis-deploy-once",
     "semantic-release": "semantic-release"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/leocwlam/simple-logger.git"
+    "url": "https://github.com/leocwlam/system-logger.git"
   },
   "keywords": [],
   "author": "Leo Lam",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/leocwlam/simple-logger/issues"
+    "url": "https://github.com/leocwlam/system-logger/issues"
   },
-  "homepage": "https://github.com/leocwlam/simple-logger#readme",
+  "homepage": "https://github.com/leocwlam/system-logger#readme",
   "dependencies": {
     "winston": "^3.0.0"
   },

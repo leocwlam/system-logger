@@ -1,16 +1,17 @@
 {
   "name": "simple-logger",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "> Provide the basic logging mechanism.  It can be easy to inject the storage logic for those logging result.",
   "main": "logging.js",
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha tests",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "runtest": "mocha tests --recursive --watch"
+    "travis-deploy-once": "travis-deploy-once",
+    "semantic-release": "semantic-release"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leocwlam/simple-logger.git"
+    "url": "https://github.com/leocwlam/simple-logger.git"
   },
   "keywords": [],
   "author": "Leo Lam",
@@ -26,6 +27,8 @@
     "chai": "^4.1.2",
     "coveralls": "^3.0.2",
     "mocha": "^5.2.0",
-    "nyc": "^12.0.2"
+    "nyc": "^12.0.2",
+    "travis-deploy-once": "^5.0.1",
+    "semantic-release": "^15.8.1"
   }
 }

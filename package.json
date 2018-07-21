@@ -1,0 +1,31 @@
+{
+  "name": "simple-logger",
+  "version": "1.0.0",
+  "description": "> Provide the basic logging mechanism.  It can be easy to inject the storage logic for those logging result.",
+  "main": "logging.js",
+  "scripts": {
+    "test": "nyc --reporter=html --reporter=text mocha tests",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "runtest": "mocha tests --recursive --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leocwlam/simple-logger.git"
+  },
+  "keywords": [],
+  "author": "Leo Lam",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/leocwlam/simple-logger/issues"
+  },
+  "homepage": "https://github.com/leocwlam/simple-logger#readme",
+  "dependencies": {
+    "winston": "^3.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.2",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2"
+  }
+}

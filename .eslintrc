@@ -1,0 +1,68 @@
+{
+    "env": {
+        "es6": true,
+        "node": true,
+        "browser": true,
+        "mocha": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module",
+        "impliedStrict": true,
+        "ecmaFeatures": {
+          "jsx": true
+        }
+    },
+    "rules": {
+        "curly": [2, "multi-line"],
+        "forin": 0,
+        "member-access": 0,
+        "no-bitwise": 0,
+        "no-console": 2,
+        "no-debugger": 2,
+        "no-eval": 2,
+        "no-inferrable-types": 0,
+        "no-string-literal": 0,
+        "no-trailing-whitespace": [true, "ignore-comments"],
+        "object-literal-sort-keys": 0,
+        "prefer-const": 1,
+        "radix": 2,
+        "semicolon": [
+            "always"
+        ],
+        "triple-equals": [
+            0,
+            "allow-null-check"
+        ],
+        "variable-name": 0,
+        "use-host-property-decorator": 0,
+        "no-access-missing-member": 0,
+        "import/no-unresolved": 0,
+        "import/no-extraneous-dependencies": 0,
+        "func-names": 0,
+        "no-multi-spaces": 0,
+        "spaced-comment": [2, "always", { "markers": ["/"] }],
+        "comma-dangle": [2, 'only-multiline'],
+        "padded-blocks": 0,
+        "class-methods-use-this": 0,
+        "max-len": [2, 200, 2, { ignoreComments: true }],
+        "no-unused-vars": [2, { vars: 'local', args: 'after-used' }],
+        "no-multiple-empty-lines": [2, { max: 2, maxEOF: 1 }],
+        "no-nested-ternary": 0,
+        "no-underscore-dangle": [2, {'allow': ['_super', '_lookupFactory']}],
+        "object-shorthand": [2, 'methods'],
+        "linebreak-style": [
+            2,
+            "unix"
+        ],
+        "quotes": [
+            1,
+            "single", { "allowTemplateLiterals": true }
+        ],
+        "semi": [
+            2,
+            "always"
+        ]
+    }
+}

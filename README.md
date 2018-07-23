@@ -20,7 +20,7 @@ logging.log('error',`Fail Log Message`, {Error: err});
 logging.log('warn',`Warn Log Message`, {Error: err});
 logging.log('info',`Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: {id: 879}});
 logging.log('verbose',`Verbose Log Message`, {oject: {message: 'test'}});
-logging.log('debug',`Debug Log Message`, {oject: {id: 123, name='tester'}}});
+logging.log('debug',`Debug Log Message`, {oject: {id: 123, name: 'tester'}});
 logging.log('silly',`Silly Log Message`);
 ```
 

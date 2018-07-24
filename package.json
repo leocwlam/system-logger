@@ -1,6 +1,6 @@
 {
   "name": "system-logger",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "> Provide the basic logging mechanism.  It can be easy to inject the storage logic for those logging result.",
   "main": "system-logger.js",
   "scripts": {

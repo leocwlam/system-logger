@@ -14,13 +14,14 @@ after_success:
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
+    - v0.0.0-system-logger
 
 script:
   - npm run test
 
 jobs:
   include:
-    - stage: npm release
+    - stage: npm run release
       node_js: lts/*
       deploy:
         provider: npm

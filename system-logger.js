@@ -96,6 +96,18 @@ function loggerLevel() {
 
 let logger = generateWinstonLogger(LOGLEVEL.info);
 
+function optionalParser(optional) {
+	const result = [];
+	if ((optional !== null) && (typeof optional !== 'undefined')) {
+		if ((optional.cId !== null) && (typeof optional.cId !== 'undefined')) {
+			result['cid'] = optional.cId;
+		} else if ((optional.cid !== null) && (typeof optional.cid !== 'undefined')) {
+			result['cid'] = optional.cid;
+		}
+	}
+	return result;
+}
+
 function parseLogMessage(level, message, optional, callback) {
 	const levelValue = converseLeveValue(level);
 
@@ -114,12 +126,7 @@ function parseLogMessage(level, message, optional, callback) {
 			} catch(error) {
 				logger.log({level: 'error', message: `Fail: To log ${optional}`, optional: error});
 			}
-
-			if ((optional.cId !== null) && (typeof optional.cId !== 'undefined')) {
-				persistCId = optional.cId;
-			} else if ((optional.cid !== null) && (typeof optional.cid !== 'undefined')) {
-				persistCId = optional.cid;
-			}
+			persistCId = optionalParser(optional)['cid'];
 		}
 		callback(persistType, persistMessage, persistDetail, persistCId);
 	}

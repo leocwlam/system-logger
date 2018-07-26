@@ -29,16 +29,5 @@
     "nyc": "^12.0.2",
     "travis-deploy-once": "^5.0.1",
     "semantic-release": "^15.8.1"
-  },
-  "release": {
-    "publish": [
-      {
-        "path": "@semantic-release/npm",
-        "npmPublish": true
-      },
-      {
-        "path": "@semantic-release/github"
-      }
-    ]
   }
 }

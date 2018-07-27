@@ -103,6 +103,7 @@ describe('logging Tests', function() {
 			logging.log('info',`Fail Log Tests`, {Detail: 'test'});
 		});
 
+		// This test will make internal fail, it will call EventEmitter memory leak.
 		it('Testing logging with external source with fail on processing optional', function() {
 			const logConfig = {};
 			logConfig.log = {};
@@ -140,8 +141,9 @@ describe('logging Tests', function() {
 			const logConfig = {};
 			logConfig.log = {};
 			logConfig.log.level = logging.level.error;
-			logConfig.log.skipConsoleDisplay = true;
-			logConfig.log.externalDisplayFormat = (info) => { return `${info.timestamp} ${info.level}: ${info.message}`;};
+			logConfig.log.skipConsoleDisplay = false;
+			//logConfig.log.externalDisplayFormat = (info) => { return `${info.timestamp} ${info.level}: ${info.message}`;};
+			logConfig.log.externalDisplayFormat = (info) => { return ''; };		// No Show anything on console, but we still test function overwritten
 
 			const externalSource = new testHelper.MockExternalSource();
 			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.saveFail};

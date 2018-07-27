@@ -6,7 +6,11 @@
 [![Dependency Status](https://david-dm.org/leocwlam/system-logger.svg)](https://david-dm.org/leocwlam/system-logger.svg)
 [![devDependency Status](https://david-dm.org/leocwlam/system-logger/dev-status.svg)](https://david-dm.org/leocwlam/system-logger#info=devDependencies)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-
+<p align="center">
+  <a href="https://www.npmjs.com/package/system-logger">
+    <img alt="npm latest version" src="https://img.shields.io/npm/v/system-logger/latest.svg">
+  </a>
+</p>
 
 # Contents
 * [Quick Start](#quick-start)

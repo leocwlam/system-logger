@@ -126,7 +126,10 @@ function parseLogMessage(level, message, optional, callback) {
 			} catch(error) {
 				logger.log({level: 'error', message: `Fail: To log ${optional}`, optional: error});
 			}
-			persistCId = optionalParser(optional)['cid'];
+			const optionalList = optionalParser(optional);
+			if (typeof optionalList['cid'] !== 'undefined') {
+				persistCId = optionalList['cid'];
+			}
 		}
 		callback(persistType, persistMessage, persistDetail, persistCId);
 	}

@@ -4,24 +4,15 @@ notifications:
   email: false
 
 node_js:
-  - '10'
-  - '9'
-  - '8'
+  - 8
+  - 6
 
 after_success:
   - npm run coverage
 
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
-    - v0.0.0-system-logger
-
-script:
-  - npm run test
-
 jobs:
   include:
-    - stage: npm run release
+    - stage: release
       node_js: lts/*
       deploy:
         provider: npm
@@ -29,4 +20,4 @@ jobs:
         api_key: "$NPM_TOKEN"
         skip_cleanup: true
         script:
-          - npm run semantic-release
+          - npx semantic-release

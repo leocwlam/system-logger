@@ -5,8 +5,7 @@
   "main": "system-logger.js",
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha tests",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "semantic-release": "semantic-release"
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -28,6 +27,6 @@
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
     "travis-deploy-once": "^5.0.1",
-    "semantic-release": "^15.8.1"
+    "semantic-release": "^15.0.0"
   }
 }

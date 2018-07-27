@@ -65,8 +65,12 @@ describe('logging Tests', function() {
 			logConfig.log.level = logging.level.error;
 			logging.setupLogConfig(logConfig);
 
+			logging.log('info');
+			logging.log('verbose', 'test message');
+			logging.log('silly', null, {Detail: 'test'});
 			logging.log('info',`Simple Log Tests`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 			logging.log('info',`Simple Log Tests`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+
 		});
 
 		it('Testing logging with external source', function() {
@@ -78,6 +82,9 @@ describe('logging Tests', function() {
 			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.save};
 			logging.setupLogConfig(logConfig);
 
+			logging.log('info');
+			logging.log('verbose', 'test message');
+			logging.log('silly', null, {Detail: 'test'});
 			logging.log('info',`Simple Log Tests`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 			logging.log('info',`Simple Log Tests`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 		});
@@ -90,14 +97,17 @@ describe('logging Tests', function() {
 			const externalSource = new testHelper.MockExternalSource();
 			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: null, callback: externalSource.save};
 			logging.setupLogConfig(logConfig);
+			logging.log('info');
+			logging.log('verbose', 'test message');
+			logging.log('silly', null, {Detail: 'test'});
 			logging.log('info',`Fail Log Tests`, {Detail: 'test'});
 		});
 
-		// This test will cause the log display error, because it design to display the exception
 		it('Testing logging with external source with fail on processing optional', function() {
 			const logConfig = {};
 			logConfig.log = {};
 			logConfig.log.level = logging.level.error;
+			logConfig.log.skipConsoleDisplay = true;
 
 			const externalSource = new testHelper.MockExternalSource();
 			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.save};
@@ -105,19 +115,25 @@ describe('logging Tests', function() {
 
 			const errorOptional = {};
 			errorOptional.a = {b:errorOptional};
-			logging.log('info',`Fail Log Tests`, errorOptional);
+			logging.log('info');
+			logging.log('verbose', 'test message');
+			logging.log('silly', null, errorOptional);
+			logging.log('info', `Fail Log Tests`, errorOptional);
 		});
 
-		// This test will cause the log display error, because it design to display the exception
 		it('Testing logging with external source with fail on external save processing', function() {
 			const logConfig = {};
 			logConfig.log = {};
 			logConfig.log.level = logging.level.error;
+			logConfig.log.skipConsoleDisplay = true;
 
 			const externalSource = new testHelper.MockExternalSource();
 			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.saveFail};
 			logging.setupLogConfig(logConfig);
-			logging.log('info',`Fail Log Tests`, {Detail: 'test'});
+			logging.log('info');
+			logging.log('verbose', 'test message');
+			logging.log('silly', null, {Detail: 'test'});
+			logging.log('info', `Fail Log Tests`, {Detail: 'test'});
 		});
 	});
 });

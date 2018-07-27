@@ -15,6 +15,7 @@ const LOGLEVEL = {
 };
 
 let externalSource = null;
+let skipConsoleDisplay = false;
 
 const converseLeveValue = function (level) {
 	let levelValue = -1;
@@ -98,14 +99,20 @@ let logger = generateWinstonLogger(LOGLEVEL.info);
 
 function optionalParser(optional) {
 	const result = [];
-	if ((optional !== null) && (typeof optional !== 'undefined')) {
-		if ((optional.cId !== null) && (typeof optional.cId !== 'undefined')) {
-			result['cid'] = optional.cId;
-		} else if ((optional.cid !== null) && (typeof optional.cid !== 'undefined')) {
-			result['cid'] = optional.cid;
-		}
+
+	if ((optional !== null) && (optional.cId !== null) && (typeof optional.cId !== 'undefined')) {
+		result['cid'] = optional.cId;
+	} else if ((optional !== null) && (optional.cid !== null) && (typeof optional.cid !== 'undefined')) {
+		result['cid'] = optional.cid;
 	}
+
 	return result;
+}
+
+function internalLog(logMessage) {
+	if (!skipConsoleDisplay) {
+		logger.log({level: logMessage.level, message: logMessage.message, optional: logMessage.optional});
+	}
 }
 
 function parseLogMessage(level, message, optional, callback) {
@@ -117,14 +124,14 @@ function parseLogMessage(level, message, optional, callback) {
 		let persistDetail = null;
 		let persistCId = null;
 
-		if ((message !== null) && (typeof message !== 'undefined')) {
+		if (typeof message !== 'undefined') {
 			persistMessage = message;
 		}
 		if ((optional !== null) && (typeof optional !== 'undefined')) {
 			try {
 				persistDetail = JSON.stringify(optional);
 			} catch(error) {
-				logger.log({level: 'error', message: `Fail: To log ${optional}`, optional: error});
+				internalLog({level: 'error', message: `Fail: To log ${optional}`, optional: error});
 			}
 			const optionalList = optionalParser(optional);
 			if (typeof optionalList['cid'] !== 'undefined') {
@@ -157,13 +164,14 @@ function persistExternalSource (level, message, optional) {
 //                    Reason: 'No result return within the config timeout "' + config.timeout + '"'
 //                })
 const log = function (level, message, optional) {
-	logger.log({level: level, message: message, optional: optional});
+	internalLog({level: level, message: message, optional: optional});
+
 	return new Promise(async function (resolve) {
 		if (externalSource !== null) {
 			try {
 				await persistExternalSource(level, message, optional);
 			} catch (error) {
-				logger.log('error', `Fail: To log ${message} to External Source`, error);
+				internalLog({level: 'error', message: `Fail: To log ${message} to External Source`, optional: error});
 			}
 		}
 		resolve();
@@ -177,7 +185,7 @@ const overrideLogLevel = function (level) {
 		format: format.colorize(),
 		handleExceptions: true,
 		humanReadableUnhandledException: true
-    })];
+	})];
 
 	logger = generateWinstonLogger(level, customtransports);
 };
@@ -190,6 +198,12 @@ const overrideExternalSource = function (levels, dBConnector, callback) {
 
 const setupLogConfig = function (config) {
 	overrideLogLevel(config.log.level);
+
+	skipConsoleDisplay = false;
+	if (!((config.log.skipConsoleDisplay === null) || (typeof config.log.skipConsoleDisplay === 'undefined'))) {
+		skipConsoleDisplay = config.log.skipConsoleDisplay;
+	}
+
 	externalSource = null;
 	if (!((config.source === null) || (typeof config.source === 'undefined'))) {
 		externalSource = {};

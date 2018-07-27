@@ -16,7 +16,7 @@ jobs:
     - stage: release
       node_js: lts/*
       deploy:
-        provider: npm
+        provider: script
         email: "$NPM_EMAIL"
         api_key: "$NPM_TOKEN"
         skip_cleanup: true

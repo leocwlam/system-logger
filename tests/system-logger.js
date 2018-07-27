@@ -135,5 +135,22 @@ describe('logging Tests', function() {
 			logging.log('silly', null, {Detail: 'test'});
 			logging.log('info', `Fail Log Tests`, {Detail: 'test'});
 		});
+
+		it('Test custom display message', function() {
+			const logConfig = {};
+			logConfig.log = {};
+			logConfig.log.level = logging.level.error;
+			logConfig.log.skipConsoleDisplay = true;
+			logConfig.log.externalDisplayFormat = (info) => { return `${info.timestamp} ${info.level}: ${info.message}`;};
+
+			const externalSource = new testHelper.MockExternalSource();
+			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.saveFail};
+			logging.setupLogConfig(logConfig);
+
+			logging.log('info');
+			logging.log('verbose', 'test message');
+			logging.log('silly', null, {Detail: 'test'});
+			logging.log('info', `Fail Log Tests`, {Detail: 'test'});
+		});
 	});
 });

@@ -2,7 +2,7 @@
 
 const winston  = require('winston');
 const { createLogger, format, transports } = winston;
-const { combine, timestamp, prettyPrint  } = format;
+const { combine, timestamp, prettyPrint, colorize, printf } = format;
 
 // Note: LOGLEVEL should be match winston.levels (instead using winston.levels, we have the custom level, so we don't need to depend on winston, when winston changes)
 const LOGLEVEL = {
@@ -16,6 +16,7 @@ const LOGLEVEL = {
 
 let externalSource = null;
 let skipConsoleDisplay = false;
+let externalDisplayFormat = null;
 
 const converseLeveValue = function (level) {
 	let levelValue = -1;
@@ -84,9 +85,19 @@ function generateWinstonLogger(level, newTransports) {
 		customtransports = newTransports;
 	}
 
+const displayFormat = printf(info => {
+	if (externalDisplayFormat !== null) {
+		return externalDisplayFormat(info);
+	}
+	return `${info.timestamp} ${info.level}: ${info.message} [Detail: ${info.optional}]`;
+});
+
 	return createLogger({
 			level: internalLevel(level),
-			format: combine(timestamp(),prettyPrint()),
+			format: combine(colorize(),
+							timestamp({
+								format: 'YYYY-MM-DD HH:mm:ss'			// local time format
+								}), displayFormat),
 			transports: customtransports
 		});
 }
@@ -131,7 +142,7 @@ function parseLogMessage(level, message, optional, callback) {
 			try {
 				persistDetail = JSON.stringify(optional);
 			} catch(error) {
-				internalLog({level: 'error', message: `Fail: To log ${optional}`, optional: error});
+				internalLog({level: 'error', message: `Fail To log ${optional}`, optional: error});
 			}
 			const optionalList = optionalParser(optional);
 			if (typeof optionalList['cid'] !== 'undefined') {
@@ -171,7 +182,7 @@ const log = function (level, message, optional) {
 			try {
 				await persistExternalSource(level, message, optional);
 			} catch (error) {
-				internalLog({level: 'error', message: `Fail: To log ${message} to External Source`, optional: error});
+				internalLog({level: 'error', message: `Fail To log ${message} to External Source`, optional: error});
 			}
 		}
 		resolve();
@@ -202,6 +213,11 @@ const setupLogConfig = function (config) {
 	skipConsoleDisplay = false;
 	if (!((config.log.skipConsoleDisplay === null) || (typeof config.log.skipConsoleDisplay === 'undefined'))) {
 		skipConsoleDisplay = config.log.skipConsoleDisplay;
+	}
+
+	externalDisplayFormat = null;
+	if (!((config.log.externalDisplayFormat === null) || (typeof config.log.externalDisplayFormat === 'undefined'))) {
+		externalDisplayFormat = config.log.externalDisplayFormat;
 	}
 
 	externalSource = null;

@@ -15,8 +15,9 @@ const LOGLEVEL = {
 };
 
 let externalSource = null;
-let skipConsoleDisplay = false;
+let silent = false;
 let externalDisplayFormat = null;
+let saveToFileName = null;
 
 const converseLeveValue = function (level) {
 	let levelValue = -1;
@@ -78,19 +79,25 @@ function internalLevel(logLevel) {
 
 function generateWinstonLogger(level, newTransports) {
 	let customtransports = [new transports.Console({
-		level: internalLevel(level)
+		name: 'console.info',
+		level: internalLevel(level),
+		showLevel: true
     })];
 
 	if (!((newTransports === null) || (typeof newTransports === 'undefined'))) {
 		customtransports = newTransports;
 	}
 
-const displayFormat = printf(info => {
-	if (externalDisplayFormat !== null) {
-		return externalDisplayFormat(info);
+	const displayFormat = printf(info => {
+		if (externalDisplayFormat !== null) {
+			return externalDisplayFormat(info);
+		}
+		return `${info.timestamp} ${info.level}: ${info.message} [Detail: ${info.optional}]`;
+	});
+
+	if (saveToFileName !== null) {
+		customtransports.push(new transports.File({ filename: saveToFileName }));
 	}
-	return `${info.timestamp} ${info.level}: ${info.message} [Detail: ${info.optional}]`;
-});
 
 	return createLogger({
 			level: internalLevel(level),
@@ -98,7 +105,8 @@ const displayFormat = printf(info => {
 							timestamp({
 								format: 'YYYY-MM-DD HH:mm:ss'			// local time format
 								}), displayFormat),
-			transports: customtransports
+			transports: customtransports,
+			silent: silent
 		});
 }
 
@@ -121,9 +129,7 @@ function optionalParser(optional) {
 }
 
 function internalLog(logMessage) {
-	if (!skipConsoleDisplay) {
-		logger.log({level: logMessage.level, message: logMessage.message, optional: logMessage.optional});
-	}
+	logger.log({level: logMessage.level, message: logMessage.message, optional: logMessage.optional});
 }
 
 function parseLogMessage(level, message, optional, callback) {
@@ -208,11 +214,9 @@ const overrideExternalSource = function (levels, dBConnector, callback) {
 };
 
 const setupLogConfig = function (config) {
-	overrideLogLevel(config.log.level);
-
-	skipConsoleDisplay = false;
-	if (!((config.log.skipConsoleDisplay === null) || (typeof config.log.skipConsoleDisplay === 'undefined'))) {
-		skipConsoleDisplay = config.log.skipConsoleDisplay;
+	silent = false;
+	if (!((config.log.silent === null) || (typeof config.log.silent === 'undefined'))) {
+		silent = config.log.silent;
 	}
 
 	externalDisplayFormat = null;
@@ -220,11 +224,18 @@ const setupLogConfig = function (config) {
 		externalDisplayFormat = config.log.externalDisplayFormat;
 	}
 
+	saveToFileName = null;
+	if (!((config.log.saveToFileName === null) || (typeof config.log.saveToFileName === 'undefined') || (config.log.saveToFileName === ''))) {
+		saveToFileName = config.log.saveToFileName;
+	}
+
 	externalSource = null;
 	if (!((config.source === null) || (typeof config.source === 'undefined'))) {
 		externalSource = {};
 		overrideExternalSource(config.source.levels, config.source.dBConnector, config.source.callback);
 	}
+
+	overrideLogLevel(config.log.level);
 };
 
 module.exports.log = log;

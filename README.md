@@ -5,7 +5,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/leocwlam/system-logger/badge.svg?branch=master)](https://coveralls.io/github/leocwlam/system-logger?branch=master)
 [![Dependency Status](https://david-dm.org/leocwlam/system-logger.svg)](https://david-dm.org/leocwlam/system-logger.svg)
 [![devDependency Status](https://david-dm.org/leocwlam/system-logger/dev-status.svg)](https://david-dm.org/leocwlam/system-logger#info=devDependencies)
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) [![Greenkeeper badge](https://badges.greenkeeper.io/leocwlam/system-logger.svg)](https://greenkeeper.io/)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+[![Greenkeeper badge](https://badges.greenkeeper.io/leocwlam/system-logger.svg)](https://greenkeeper.io/)
 <p align="center">
   <a href="https://www.npmjs.com/package/system-logger">
     <img alt="npm latest version" src="https://img.shields.io/npm/v/system-logger/latest.svg">

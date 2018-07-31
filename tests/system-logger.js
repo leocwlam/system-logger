@@ -1,13 +1,19 @@
 'use strict';
 
+const fs = require("fs");
 const chai = require('chai');
 const expect = chai.expect;
 
 const logging = require('../system-logger');
-
 const testHelper = require('./testHelper');
 
+const DELAYTOCHECKTESTLOGFILE = 1000;
+const TESTLOGFILE = './tests/testArea/test.log';
+
 describe('logging Tests', function() {
+	before(() => {
+		fs.unlinkSync(TESTLOGFILE);		// No need to check file exist fs.existsSync(TESTLOGFILE). unlinkSync will skip when file no exist
+	});
 	describe('Setting Tests', function() {
 		it('verify converseLeveValue', function() {
 			expect(logging.converseLeveValue(logging.level.error)).to.equal(logging.level.error);
@@ -69,8 +75,37 @@ describe('logging Tests', function() {
 			logging.log('verbose', 'test message');
 			logging.log('silly', null, {Detail: 'test'});
 			logging.log('info',`Simple Log Tests`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
-			logging.log('info',`Simple Log Tests`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logging.log('warn',`Simple Log Tests`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 
+		});
+
+		it('Testing logging with export file log', function() {
+			let logConfig = {};
+			logConfig.log = {};
+			logConfig.log.level = logging.level.info;
+			logConfig.log.silent = true;
+			logConfig.log.saveToFileName = TESTLOGFILE;	// Also support absolute path e.g. `c:\\temp`
+			logging.setupLogConfig(logConfig);
+
+			logging.log('info');
+			logging.log('verbose', 'test message');
+			logging.log('silly', null, {Detail: 'test'});
+			logging.log('info',`Simple Log Tests`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logging.log('warn',`Simple Log Tests`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+
+
+			logConfig.log.saveToFileFolder = null;
+			logging.setupLogConfig(logConfig);
+
+			logging.log('info');
+			logging.log('verbose', 'test message');
+			logging.log('silly', null, {Detail: 'test'});
+			logging.log('info',`Simple Log Tests 11`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logging.log('warn',`Simple Log Tests 12`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+
+			setTimeout(function() {
+				expect(fs.existsSync(TESTLOGFILE)).to.equal(true);
+			}, DELAYTOCHECKTESTLOGFILE);
 		});
 
 		it('Testing logging with external source', function() {
@@ -86,7 +121,7 @@ describe('logging Tests', function() {
 			logging.log('verbose', 'test message');
 			logging.log('silly', null, {Detail: 'test'});
 			logging.log('info',`Simple Log Tests`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
-			logging.log('info',`Simple Log Tests`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logging.log('warn',`Simple Log Tests`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 		});
 
 		it('Testing logging with external source without calling to callback (no connector)', function() {
@@ -108,7 +143,7 @@ describe('logging Tests', function() {
 			const logConfig = {};
 			logConfig.log = {};
 			logConfig.log.level = logging.level.error;
-			logConfig.log.skipConsoleDisplay = true;
+			logConfig.log.silent = true;
 
 			const externalSource = new testHelper.MockExternalSource();
 			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.save};
@@ -126,7 +161,7 @@ describe('logging Tests', function() {
 			const logConfig = {};
 			logConfig.log = {};
 			logConfig.log.level = logging.level.error;
-			logConfig.log.skipConsoleDisplay = true;
+			logConfig.log.silent = true;
 
 			const externalSource = new testHelper.MockExternalSource();
 			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.saveFail};
@@ -141,8 +176,8 @@ describe('logging Tests', function() {
 			const logConfig = {};
 			logConfig.log = {};
 			logConfig.log.level = logging.level.error;
-			logConfig.log.skipConsoleDisplay = false;
-			//logConfig.log.externalDisplayFormat = (info) => { return `${info.timestamp} ${info.level}: ${info.message}`;};
+			logConfig.log.silent = false;
+			// logConfig.log.externalDisplayFormat = (info) => { return `${info.timestamp} ${info.level}: ${info.message}`;};
 			logConfig.log.externalDisplayFormat = (info) => { return ''; };		// No Show anything on console, but we still test function overwritten
 
 			const externalSource = new testHelper.MockExternalSource();

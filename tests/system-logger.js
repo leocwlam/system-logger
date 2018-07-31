@@ -11,8 +11,8 @@ const DELAYTOCHECKTESTLOGFILE = 1000;
 const TESTLOGFILE = './tests/testArea/test.log';
 
 describe('logging Tests', function() {
-	before(() => {
-		fs.unlinkSync(TESTLOGFILE);		// No need to check file exist fs.existsSync(TESTLOGFILE). unlinkSync will skip when file no exist
+	after(() => {
+		fs.unlinkSync(TESTLOGFILE);
 	});
 	describe('Setting Tests', function() {
 		it('verify converseLeveValue', function() {

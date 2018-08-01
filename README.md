@@ -24,13 +24,13 @@
 * [License](#license)
 
 
-# <a name="quick-start">Quick Start</a>
+# <a name="quick-start"></a>Quick Start
 **Install via npm:**
 ``` bash
 npm install system-logger --save
 ```
 
-# <a name="definition">Definition</a>
+# <a name="definition"></a>Definition
 
 ``` js
 const logging = require('system-logger');
@@ -41,8 +41,8 @@ const logging = require('system-logger');
 - `options`: optional information
 
 
-# <a name="example">Example</a>
-## <a name="get-start">Get Start</a>
+# <a name="example"></a>Example
+## <a name="get-start"></a>Get Start
 ``` js
 const logging = require('system-logger');
 
@@ -62,7 +62,7 @@ logging.log('debug',`Debug Log Message`, {action: {id: 123, name: 'tester'}});
 logging.log('silly',`Silly Log Message`);
 ```
 
-## <a name="save-to-logfile">Save to log file</a>
+## <a name="save-to-logfile"></a>Save to log file
 ``` js
 const logging = require('system-logger');
 
@@ -74,7 +74,7 @@ logging.setupLogConfig(logConfig);
 logging.log('info',`Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: {id: 879}});
 ```
 
-##  <a name="overwrite-with-message-format">Overwrite with message format</a>
+##  <a name="overwrite-with-message-format"></a>Overwrite with message format
 ``` js
 const logging = require('system-logger');
 
@@ -93,7 +93,7 @@ logging.setupLogConfig(logConfig);
 logging.log('info',`Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: {id: 879}});
 ```
 
-# <a name="use-case">Use Case</a>
+# <a name="use-case"></a>Use Case
 Need to disable the entire logging during testing
 ``` js
 const logging = require('system-logger');
@@ -109,6 +109,6 @@ logging.log('info',`Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733
 logging.log('error',`Fail Log Message`, {error: 'err message'});
 ```
 
-# <a name="license">License</a>
+# <a name="license"></a>License
 Apache 2.0
 

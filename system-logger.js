@@ -92,7 +92,20 @@ function generateWinstonLogger(level, newTransports) {
 		if (externalDisplayFormat !== null) {
 			return externalDisplayFormat(info);
 		}
-		return `${info.timestamp} ${info.level}: ${info.message} [Detail: ${info.optional}]`;
+
+		if ((info.optional === null) || (typeof info.optional === 'undefined')) {
+			return `${info.timestamp} ${info.level}: ${info.message}`;
+		} else {
+			let errorDetail = info.optional;
+			if ((typeof errorDetail === 'object')) {
+				if ((errorDetail.name === null) || (typeof errorDetail.name === 'undefined')) {
+					errorDetail = JSON.stringify(errorDetail);
+				} else {
+					errorDetail = `{${info.optional}}`;
+				}
+			}
+			return `${info.timestamp} ${info.level}: ${info.message} [Detail: ${errorDetail}]`;
+		}
 	});
 
 	if (saveToFileName !== null) {

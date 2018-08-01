@@ -74,8 +74,29 @@ describe('logging Tests', function() {
 			logging.log('info');
 			logging.log('verbose', 'test message');
 			logging.log('silly', null, {Detail: 'test'});
+			logging.log('info', 'test message', 'test');
+			logging.log('info', 'test message', 123);
+			logging.log('info', 'test message', [123, 'test']);
 			logging.log('info',`Simple Log Tests`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 			logging.log('warn',`Simple Log Tests`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+
+		});
+
+		it('Testing logging with object', function() {
+			class Test {
+				constructor() {
+					this.name = 'Test';
+					this.firstName = 'tester';
+					this.lastName = 'tp';
+				}
+			}
+			const logConfig = {};
+			logConfig.log = {};
+			logConfig.log.level = logging.level.error;
+			logging.setupLogConfig(logConfig);
+
+			logging.log('info', 'test message', new Error('error message'));
+			logging.log('info', 'test message', new Test());
 
 		});
 

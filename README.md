@@ -122,6 +122,42 @@ logging.setupLogConfig(logConfig);
 logging.log('info', `Information Log Tests`, {Detail: 'test'});
 ```
 
+Need to persist to DB
+``` js
+const logExternalCallBack = async function(connector, type, message, detail, cId) {
+	const sql = require('mssql');
+	const result = await connector.request()
+		.input('type_parameter', sql.TinyInt, type)
+		.input('cId_parameter', sql.NVarChar, cId)
+		.input('message_parameter', sql.NVarChar, message)
+		.input('detail_parameter', sql.NVarChar, detail)
+		.query(`INSERT INTO Process_Log
+				([LogType], [CId], [Message], [Detail])
+	     	VALUES
+				(@type_parameter,
+				@cId_parameter,
+				@message_parameter,
+				@detail_parameter)`);
+		return result;
+};
+
+const logConfig = {};
+logConfig.log = {};
+logConfig.log.level = logging.level.info;
+logConfig.log.silent = false;
+
+const mssql = require('mssql');
+const localhost = 'localhost';
+const database = 'MonitorDB';
+const username = 'UserMonitor';
+const password = 'Test!23AbcPassword';
+const pool = await mssql.connect(`mssql://${username}:${password}@${localhost}/${database}`);
+logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: pool, callback: logExternalCallBack};
+logging.setupLogConfig(logConfig);
+
+await logging.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+pool.close();
+```
 
 # <a name="license"></a>License
 Apache 2.0

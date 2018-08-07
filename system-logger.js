@@ -283,9 +283,9 @@ const overrideLogLevel = function (level) {
 	logger = generateWinstonLogger(level, customtransports);
 };
 
-const overrideExternalSource = function (levels, dBConnector, callback) {
+const overrideExternalSource = function (levels, connector, callback) {
 	externalSource.levels = levels;
-	externalSource.connector = dBConnector;
+	externalSource.connector = connector;
 	externalSource.callback = callback;
 };
 
@@ -323,7 +323,7 @@ const setupLogConfig = function (config) {
 	externalSource = null;
 	if (!((config.source === null) || (typeof config.source === 'undefined'))) {
 		externalSource = {};
-		overrideExternalSource(config.source.levels, config.source.dBConnector, config.source.callback);
+		overrideExternalSource(config.source.levels, config.source.connector, config.source.callback);
 	}
 
 	overrideLogLevel(config.log.level);

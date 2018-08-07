@@ -163,7 +163,7 @@ describe('logging Tests', function() {
 			logConfig.log.level = logging.level.error;
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.save};
+			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: externalSource.connector, callback: externalSource.save};
 			logging.setupLogConfig(logConfig);
 
 			logging.log('info');
@@ -179,7 +179,7 @@ describe('logging Tests', function() {
 			logConfig.log.level = logging.level.error;
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: null, callback: externalSource.save};
+			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: null, callback: externalSource.save};
 			logging.setupLogConfig(logConfig);
 			logging.log('info');
 			logging.log('verbose', 'test message');
@@ -195,7 +195,7 @@ describe('logging Tests', function() {
 			logConfig.log.silent = true;
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.save};
+			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: externalSource.connector, callback: externalSource.save};
 			logging.setupLogConfig(logConfig);
 
 			const errorOptional = {};
@@ -213,7 +213,7 @@ describe('logging Tests', function() {
 			logConfig.log.silent = true;
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.saveFail};
+			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: externalSource.connector, callback: externalSource.saveFail};
 			logging.setupLogConfig(logConfig);
 			logging.log('info');
 			logging.log('verbose', 'test message');
@@ -230,7 +230,7 @@ describe('logging Tests', function() {
 			logConfig.log.externalDisplayFormat = (info) => { return ''; };		// No Show anything on console, but we still test function overwritten
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], dBConnector: externalSource.connector, callback: externalSource.saveFail};
+			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: externalSource.connector, callback: externalSource.saveFail};
 			logging.setupLogConfig(logConfig);
 
 			logging.log('info');

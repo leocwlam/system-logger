@@ -109,6 +109,20 @@ logging.log('info',`Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733
 logging.log('error',`Fail Log Message`, {error: 'err message'});
 ```
 
+Need to file rotation
+``` js
+const testfileRotateType = logging.fileRotateType.daily;
+const logConfig = {};
+logConfig.log = {};
+logConfig.log.saveToFileName =  './track.log';
+logConfig.log.isFileRotate = true;
+logConfig.log.fileRotateType = logging.fileRotateType.daily;
+
+logging.setupLogConfig(logConfig);
+logging.log('info', `Information Log Tests`, {Detail: 'test'});
+```
+
+
 # <a name="license"></a>License
 Apache 2.0
 

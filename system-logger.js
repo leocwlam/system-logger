@@ -2,7 +2,8 @@
 
 const winston  = require('winston');
 const { createLogger, format, transports } = winston;
-const { combine, timestamp, prettyPrint, colorize, printf } = format;
+const { combine, timestamp, colorize, printf } = format;
+const winstonDailyRotateFile  = require('winston-daily-rotate-file');
 
 // Note: LOGLEVEL should be match winston.levels (instead using winston.levels, we have the custom level, so we don't need to depend on winston, when winston changes)
 const LOGLEVEL = {
@@ -14,10 +15,21 @@ const LOGLEVEL = {
 	silly : 5
 };
 
+const LOGFILEROTATE = {
+	monthly : 0,
+	weekly : 1,
+	daily : 2,
+	hourly : 3,
+	minutely : 4
+};
+
 let externalSource = null;
 let silent = false;
 let externalDisplayFormat = null;
 let saveToFileName = null;
+let isFileRotate = false;
+let	fileRotateType = LOGFILEROTATE.daily;
+let fileRotateMaxSize = '1g';		   // add 'k', 'm', or 'g', as 100m
 
 const converseLeveValue = function (level) {
 	let levelValue = -1;
@@ -77,6 +89,57 @@ function internalLevel(logLevel) {
 	return levelValue;
 }
 
+function logFileRotateDatePattern(logRotateType) {
+	let result = null;
+	if ((logRotateType === null) || (typeof logRotateType === 'undefined')) {
+		return result;
+	}
+
+	switch (logRotateType) {
+	case LOGFILEROTATE.monthly:
+		result = 'YYYY-MM';
+		break;
+	case LOGFILEROTATE.weekly:
+		result = 'YYYY-[W]WW';
+		break;
+	case LOGFILEROTATE.daily:
+		result = 'YYYY-MM-DD';
+		break;
+	case LOGFILEROTATE.hourly:
+		result = 'YYYY-MM-DDTHH';
+		break;
+	case LOGFILEROTATE.minutely:
+		result = 'YYYY-MM-DDTHH_mm';
+		break;
+	}
+	return result;
+}
+
+function fileTransport(filename, isRotate, logRotateType) {
+	if (isRotate) {
+		let filenameFormat = './%DATE%.log';
+		if (filename !== null) {
+			const locationExt = filename.lastIndexOf('.');
+			filenameFormat = `${filename}%DATE%`;
+			if (locationExt > 0) {
+				filenameFormat = `${filename.slice(0,locationExt)}%DATE%${filename.slice(locationExt)}`;
+			}
+		}
+
+		const rotateDatePattern = logFileRotateDatePattern(logRotateType);
+
+		return new winstonDailyRotateFile({
+			name: 'dailyLogFile.info',
+			datePattern: rotateDatePattern,
+			filename: filenameFormat,
+			maxsize: fileRotateMaxSize
+		});
+	} else if (filename !== null) {
+		return new transports.File({ name: 'logFile.info', filename: filename });
+	}
+	return null;
+}
+
 function generateWinstonLogger(level, newTransports) {
 	let customtransports = [new transports.Console({
 		name: 'console.info',
@@ -107,9 +170,9 @@ function generateWinstonLogger(level, newTransports) {
 			return `${info.timestamp} ${info.level}: ${info.message} [Detail: ${errorDetail}]`;
 		}
 	});
-
-	if (saveToFileName !== null) {
-		customtransports.push(new transports.File({ filename: saveToFileName }));
+	const filetran =  fileTransport(saveToFileName, isFileRotate, fileRotateType);
+	if(filetran !== null) {
+		customtransports.push(filetran);
 	}
 
 	return createLogger({
@@ -242,6 +305,21 @@ const setupLogConfig = function (config) {
 		saveToFileName = config.log.saveToFileName;
 	}
 
+	isFileRotate = false;
+	if ((config.log.isFileRotate !== null) && (typeof config.log.isFileRotate === 'boolean')) {
+		isFileRotate = config.log.isFileRotate;
+	}
+
+	fileRotateType = LOGFILEROTATE.daily;
+	// Calling logFileRotateDatePattern is only for validation
+	if (logFileRotateDatePattern(config.log.fileRotateType) !== null) {
+		fileRotateType = config.log.fileRotateType;
+	}
+	fileRotateMaxSize = '1g';		   // add 'k', 'm', or 'g', as 100m
+	if (!((config.log.fileRotateMaxSize === null) || (typeof config.log.fileRotateMaxSize === 'undefined') || (config.log.fileRotateMaxSize === ''))) {
+		fileRotateMaxSize = config.log.fileRotateMaxSize;
+	}
+
 	externalSource = null;
 	if (!((config.source === null) || (typeof config.source === 'undefined'))) {
 		externalSource = {};
@@ -253,7 +331,9 @@ const setupLogConfig = function (config) {
 
 module.exports.log = log;
 module.exports.level = LOGLEVEL;
+module.exports.fileRotateType = LOGFILEROTATE;
 module.exports.setupLogConfig = setupLogConfig;
 module.exports.loggerLevel = loggerLevel;
 module.exports.overrideLogLevel = overrideLogLevel;
 module.exports.converseLeveValue = converseLeveValue;
+

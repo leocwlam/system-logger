@@ -160,5 +160,5 @@ pool.close();
 ```
 
 # <a name="license"></a>License
-Apache 2.0
+MIT
 

@@ -32,34 +32,26 @@ let	fileRotateType = LOGFILEROTATE.daily;
 let fileRotateMaxSize = '1g';		   // add 'k', 'm', or 'g', as 100m
 
 const converseLeveValue = function (level) {
-	let levelValue = -1;
+	let levelValue = 0;
 	switch (level) {
-	case LOGLEVEL.error:
 	case 'error':
 		levelValue = LOGLEVEL.error;
 		break;
-	case LOGLEVEL.warn:
 	case 'warn':
 		levelValue = LOGLEVEL.warn;
 		break;
-	case LOGLEVEL.info:
 	case 'info':
 		levelValue = LOGLEVEL.info;
 		break;
-	case LOGLEVEL.verbose:
 	case 'verbose':
 		levelValue = LOGLEVEL.verbose;
 		break;
-	case LOGLEVEL.debug:
 	case 'debug':
 		levelValue = LOGLEVEL.debug;
 		break;
-	case LOGLEVEL.silly:
 	case 'silly':
 		levelValue = LOGLEVEL.silly;
 		break;
-	default:
-		levelValue = 0;
 	}
 	return levelValue;
 };
@@ -184,10 +176,6 @@ function generateWinstonLogger(level, newTransports) {
 			transports: customtransports,
 			silent: silent
 		});
-}
-
-function loggerLevel() {
-	return converseLeveValue(logger.level);
 }
 
 let logger = generateWinstonLogger(LOGLEVEL.info);
@@ -333,7 +321,4 @@ module.exports.log = log;
 module.exports.level = LOGLEVEL;
 module.exports.fileRotateType = LOGFILEROTATE;
 module.exports.setupLogConfig = setupLogConfig;
-module.exports.loggerLevel = loggerLevel;
-module.exports.overrideLogLevel = overrideLogLevel;
-module.exports.converseLeveValue = converseLeveValue;
 

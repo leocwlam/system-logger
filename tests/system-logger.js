@@ -42,54 +42,26 @@ function rotationSaveFile(filename, fileRotateType) {
 
 describe('logging Tests', function() {
 	describe('Setting Tests', function() {
-		it('verify converseLeveValue', function() {
-			expect(logging.converseLeveValue(logging.level.error)).to.equal(logging.level.error);
-			expect(logging.converseLeveValue('error')).to.equal(logging.level.error);
-
-			expect(logging.converseLeveValue(logging.level.warn)).to.equal(logging.level.warn);
-			expect(logging.converseLeveValue('warn')).to.equal(logging.level.warn);
-
-			expect(logging.converseLeveValue(logging.level.info)).to.equal(logging.level.info);
-			expect(logging.converseLeveValue('info')).to.equal(logging.level.info);
-
-			expect(logging.converseLeveValue(logging.level.verbose)).to.equal(logging.level.verbose);
-			expect(logging.converseLeveValue('verbose')).to.equal(logging.level.verbose);
-
-			expect(logging.converseLeveValue(logging.level.debug)).to.equal(logging.level.debug);
-			expect(logging.converseLeveValue('debug')).to.equal(logging.level.debug);
-
-			expect(logging.converseLeveValue(logging.level.silly)).to.equal(logging.level.silly);
-			expect(logging.converseLeveValue('silly')).to.equal(logging.level.silly);
-
-			expect(logging.converseLeveValue('undefined')).to.equal(0);
-		});
-
 		it('Testing logging setupLogConfig with difference level', function() {
 			const logConfig = {};
 			logConfig.log = {};
 			logConfig.log.level = logging.level.error;
 			logging.setupLogConfig(logConfig);
-			expect(logging.loggerLevel()).to.equal(logging.level.error);
 
 			logConfig.log.level = logging.level.warn;
 			logging.setupLogConfig(logConfig);
-			expect(logging.loggerLevel()).to.equal(logging.level.warn);
 
 			logConfig.log.level = logging.level.info;
 			logging.setupLogConfig(logConfig);
-			expect(logging.loggerLevel()).to.equal(logging.level.info);
 
 			logConfig.log.level = logging.level.verbose;
 			logging.setupLogConfig(logConfig);
-			expect(logging.loggerLevel()).to.equal(logging.level.verbose);
 
 			logConfig.log.level = logging.level.debug;
 			logging.setupLogConfig(logConfig);
-			expect(logging.loggerLevel()).to.equal(logging.level.debug);
 
 			logConfig.log.level = logging.level.silly;
 			logging.setupLogConfig(logConfig);
-			expect(logging.loggerLevel()).to.equal(logging.level.silly);
 		});
 
 		it('Testing logging without external source', function() {
@@ -106,6 +78,7 @@ describe('logging Tests', function() {
 			logging.log('info', 'test message', [123, 'test']);
 			logging.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 			logging.log('warn',`Simple Log Test`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logging.log('debug',`Simple Log Test`);
 
 		});
 
@@ -204,6 +177,7 @@ describe('logging Tests', function() {
 			logging.log('verbose', 'test message');
 			logging.log('silly', null, errorOptional);
 			logging.log('info', `Information Log Test`, errorOptional);
+			logging.log('debug', `debug Log Test`);
 		});
 
 		it('Testing logging with external source with fail on external save processing', function() {
@@ -219,6 +193,7 @@ describe('logging Tests', function() {
 			logging.log('verbose', 'test message');
 			logging.log('silly', null, {Detail: 'test'});
 			logging.log('info', `Information Log Test`, {Detail: 'test'});
+			logging.log('error', `Fail Log Test`, {Error: 'test'});
 		});
 
 		it('Test custom display message', function() {

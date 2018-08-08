@@ -7,7 +7,8 @@ const dateFormat = require('dateformat');
 
 const expect = chai.expect;
 
-const logging = require('../system-logger');
+const systemlogger = require('../system-logger');
+const { Logger } = systemlogger;
 const testHelper = require('./testHelper');
 
 const DELAYTOCHECKTESTLOGFILE = 1000;
@@ -21,19 +22,19 @@ function rotationSaveFile(filename, fileRotateType) {
 	}
 	let result = '';
 	switch (fileRotateType) {
-		case logging.fileRotateType.monthly:
+		case systemlogger.fileRotateType.monthly:
 			result = filenameFormat.replace('%DATE%', dateFormat(new Date(),'yyyy-mm'));
 			break;
-		case logging.fileRotateType.weekly:
+		case systemlogger.fileRotateType.weekly:
 			result = filenameFormat.replace('%DATE%', dateFormat(new Date(),'yyyy- W')).replace(' ', 'W');
 			break;
-		case logging.fileRotateType.daily:
+		case systemlogger.fileRotateType.daily:
 			result = filenameFormat.replace('%DATE%', dateFormat(new Date(),'yyyy-mm-dd'));
 			break;
-		case logging.fileRotateType.hourly:
+		case systemlogger.fileRotateType.hourly:
 			result = filenameFormat.replace('%DATE%', dateFormat(new Date(),'yyyy-mm-dd HH')).replace(' ', 'T');
 			break;
-		case logging.fileRotateType.minutely:
+		case systemlogger.fileRotateType.minutely:
 			result = filenameFormat.replace('%DATE%', dateFormat(new Date(),'yyyy-mm-dd HH_MM')).replace(' ', 'T');
 			break;
 	}
@@ -44,41 +45,39 @@ describe('logging Tests', function() {
 	describe('Setting Tests', function() {
 		it('Testing logging setupLogConfig with difference level', function() {
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logging.setupLogConfig(logConfig);
+			logConfig.level = systemlogger.level.error;
+			const logger = new Logger(logConfig);
 
-			logConfig.log.level = logging.level.warn;
-			logging.setupLogConfig(logConfig);
+			logConfig.level = systemlogger.level.warn;
+			logger.setupLogConfig(logConfig);
 
-			logConfig.log.level = logging.level.info;
-			logging.setupLogConfig(logConfig);
+			logConfig.level = systemlogger.level.info;
+			logger.setupLogConfig(logConfig);
 
-			logConfig.log.level = logging.level.verbose;
-			logging.setupLogConfig(logConfig);
+			logConfig.level = systemlogger.level.verbose;
+			logger.setupLogConfig(logConfig);
 
-			logConfig.log.level = logging.level.debug;
-			logging.setupLogConfig(logConfig);
+			logConfig.level = systemlogger.level.debug;
+			logger.setupLogConfig(logConfig);
 
-			logConfig.log.level = logging.level.silly;
-			logging.setupLogConfig(logConfig);
+			logConfig.level = systemlogger.level.silly;
+			logger.setupLogConfig(logConfig);
 		});
 
 		it('Testing logging without external source', function() {
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logging.setupLogConfig(logConfig);
+			logConfig.level = systemlogger.level.error;
+			const logger = new Logger(logConfig);
 
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info', 'test message', 'test');
-			logging.log('info', 'test message', 123);
-			logging.log('info', 'test message', [123, 'test']);
-			logging.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
-			logging.log('warn',`Simple Log Test`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
-			logging.log('debug',`Simple Log Test`);
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info', 'test message', 'test');
+			logger.log('info', 'test message', 123);
+			logger.log('info', 'test message', [123, 'test']);
+			logger.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logger.log('warn',`Simple Log Test`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logger.log('debug',`Simple Log Test`);
 
 		});
 
@@ -91,38 +90,34 @@ describe('logging Tests', function() {
 				}
 			}
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logging.setupLogConfig(logConfig);
+			logConfig.level = systemlogger.level.error;
+			const logger = new Logger(logConfig);
 
-			logging.log('info', 'test message', new Error('error message'));
-			logging.log('info', 'test message', new Test());
-
+			logger.log('info', 'test message', new Error('error message'));
+			logger.log('info', 'test message', new Test());
 		});
 
 		it('Testing logging with export file log', function() {
-			let logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.info;
-			logConfig.log.silent = true;
-			logConfig.log.saveToFileName = TESTLOGFILE;	// Also support absolute path e.g. `c:\\temp`
-			logging.setupLogConfig(logConfig);
+			const logConfig = {};
+			logConfig.level = systemlogger.level.info;
+			logConfig.silent = true;
+			const fileConfig = {saveToFileName: TESTLOGFILE};	// Also support absolute path e.g. `c:\\temp`
 
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
-			logging.log('warn',`Simple Log Test`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			const logger = new Logger(logConfig, fileConfig);
 
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logger.log('warn',`Simple Log Test`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 
-			logConfig.log.saveToFileFolder = null;
-			logging.setupLogConfig(logConfig);
+			logger.setupLogConfig(logConfig);
 
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
-			logging.log('warn',`Simple Log Test`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logger.log('warn',`Simple Log Test`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 
 			setTimeout(function() {
 				expect(fs.existsSync(TESTLOGFILE)).to.equal(true);
@@ -132,114 +127,111 @@ describe('logging Tests', function() {
 
 		it('Testing logging with external source', function() {
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
+			logConfig.level = systemlogger.level.error;
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: externalSource.connector, callback: externalSource.save};
-			logging.setupLogConfig(logConfig);
+			const sourceConfig = {levels:[systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: externalSource.connector, callback: externalSource.save};
+			const logger = new Logger(logConfig, null, sourceConfig);
 
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
-			logging.log('warn',`Simple Log Test`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info',`Simple Log Test`, {Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
+			logger.log('warn',`Simple Log Test`, {Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' });
 		});
 
 		it('Testing logging with external source without calling to callback (no connector)', function() {
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
+			logConfig.level = systemlogger.level.error;
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: null, callback: externalSource.save};
-			logging.setupLogConfig(logConfig);
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info',`Information Log Test`, {Detail: 'test'});
+			const sourceConfig = {levels:[systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: null, callback: externalSource.save};
+			const logger = new Logger(logConfig, null, sourceConfig);
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info',`Information Log Test`, {Detail: 'test'});
 		});
 
 		// This test will make internal fail, it will call EventEmitter memory leak.
 		it('Testing logging with external source with fail on processing optional', function() {
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logConfig.log.silent = true;
+			logConfig.level = systemlogger.level.error;
+			logConfig.silent = true;
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: externalSource.connector, callback: externalSource.save};
-			logging.setupLogConfig(logConfig);
+			const sourceConfig =  {levels:[systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: externalSource.connector, callback: externalSource.save};
+			const logger = new Logger(logConfig, null, sourceConfig);
 
 			const errorOptional = {};
 			errorOptional.a = {b:errorOptional};
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, errorOptional);
-			logging.log('info', `Information Log Test`, errorOptional);
-			logging.log('debug', `debug Log Test`);
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, errorOptional);
+			logger.log('info', `Information Log Test`, errorOptional);
+			logger.log('debug', `debug Log Test`);
 		});
 
 		it('Testing logging with external source with fail on external save processing', function() {
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logConfig.log.silent = true;
+			logConfig.level = systemlogger.level.error;
+			logConfig.silent = true;
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: externalSource.connector, callback: externalSource.saveFail};
-			logging.setupLogConfig(logConfig);
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info', `Information Log Test`, {Detail: 'test'});
-			logging.log('error', `Fail Log Test`, {Error: 'test'});
+			const sourceConfig = {levels:[systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: externalSource.connector, callback: externalSource.saveFail};
+			const logger = new Logger(logConfig, null, sourceConfig);
+
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info', `Information Log Test`, {Detail: 'test'});
+			logger.log('error', `Fail Log Test`, {Error: 'test'});
 		});
 
 		it('Test custom display message', function() {
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logConfig.log.silent = false;
-			// logConfig.log.externalDisplayFormat = (info) => { return `${info.timestamp} ${info.level}: ${info.message}`;};
-			logConfig.log.externalDisplayFormat = (info) => { return ''; };		// No Show anything on console, but we still test function overwritten
+			logConfig.level = systemlogger.level.error;
+			logConfig.silent = false;
+			// logConfig.externalDisplayFormat = (info) => { return `${info.timestamp} ${info.level}: ${info.message}`;};
+			logConfig.externalDisplayFormat = (info) => { return ''; };		// No Show anything on console, but we still test function overwritten
 
 			const externalSource = new testHelper.MockExternalSource();
-			logConfig.source = {levels:[logging.level.error, logging.level.warn, logging.level.info], connector: externalSource.connector, callback: externalSource.saveFail};
-			logging.setupLogConfig(logConfig);
+			const sourceConfig = {levels:[systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: externalSource.connector, callback: externalSource.saveFail};
+			const logger = new Logger(logConfig, null, sourceConfig);
 
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info', `Information Log Test`, {Detail: 'test'});
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info', `Information Log Test`, {Detail: 'test'});
 		});
 
 		describe('Test fileTransport behavior', function () {
 			const testCases = [
-					logging.fileRotateType.monthly,
-					logging.fileRotateType.weekly,
-					logging.fileRotateType.daily,
-					logging.fileRotateType.hourly,
-					logging.fileRotateType.minutely
+					systemlogger.fileRotateType.monthly,
+					systemlogger.fileRotateType.weekly,
+					systemlogger.fileRotateType.daily,
+					systemlogger.fileRotateType.hourly,
+					systemlogger.fileRotateType.minutely
 				];
 
 			testCases.forEach(function (fileRotateType) {
 				it(`Test fileTransport with ${fileRotateType} fileRotateType`, function() {
 					const filename = `${TESTLOGFILE}-${fileRotateType}`;
 					const logConfig = {};
-					logConfig.log = {};
-					logConfig.log.level = logging.level.error;
-					logConfig.log.saveToFileName = filename;
-					logConfig.log.isFileRotate = true;
-					logConfig.log.fileRotateType = fileRotateType;
-					logConfig.log.fileRotateMaxSize ='1m';
-					logConfig.log.silent = true;
+					logConfig.level = systemlogger.level.error;
+					logConfig.silent = true;
 
-					logging.setupLogConfig(logConfig);
-					logging.log('info');
-					logging.log('verbose', 'test message');
-					logging.log('silly', null, {Detail: 'test'});
-					logging.log('info', `Information Log Test`, {Detail: 'test'});
+					const fileConfig = {};
+					fileConfig.saveToFileName = filename;
+					fileConfig.isFileRotate = true;
+					fileConfig.fileRotateType = fileRotateType;
+					fileConfig.fileRotateMaxSize ='1m';
+
+					const logger = new Logger(logConfig, fileConfig);
+					logger.log('info');
+					logger.log('verbose', 'test message');
+					logger.log('silly', null, {Detail: 'test'});
+					logger.log('info', `Information Log Test`, {Detail: 'test'});
 					setTimeout(function() {
 						const outFilename = rotationSaveFile(filename, fileRotateType);
 						expect(fs.existsSync(outFilename)).to.equal(true);
@@ -250,21 +242,22 @@ describe('logging Tests', function() {
 		});
 
 		it(`Test fileTransport fileRotate and file without extension`, function() {
-			const testfileRotateType = logging.fileRotateType.monthly;
+			const testfileRotateType = systemlogger.fileRotateType.monthly;
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logConfig.log.saveToFileName = `${TESTLOGFILE}`;
-			logConfig.log.isFileRotate = true;
-			logConfig.log.fileRotateType = testfileRotateType;
-			logConfig.log.silent = true;
-			logConfig.log.fileRotateMaxSize ='1g';
+			logConfig.level = systemlogger.level.error;
+			logConfig.silent = true;
 
-			logging.setupLogConfig(logConfig);
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info', `Information Log Test`, {Detail: 'test'});
+			const fileConfig = {};
+			fileConfig.saveToFileName = `${TESTLOGFILE}`;
+			fileConfig.isFileRotate = true;
+			fileConfig.fileRotateType = testfileRotateType;
+			fileConfig.fileRotateMaxSize ='1g';
+
+			const logger = new Logger(logConfig, fileConfig);
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info', `Information Log Test`, {Detail: 'test'});
 			setTimeout(function() {
 				const outFilename = rotationSaveFile(TESTLOGFILE, testfileRotateType);
 				expect(fs.existsSync(outFilename)).to.equal(true);
@@ -273,20 +266,21 @@ describe('logging Tests', function() {
 		});
 
 		it(`Test fileTransport fileRotate and file with extension`, function() {
-			const testfileRotateType = logging.fileRotateType.monthly;
+			const testfileRotateType = systemlogger.fileRotateType.monthly;
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logConfig.log.saveToFileName = `${TESTLOGFILE}.log`;
-			logConfig.log.isFileRotate = true;
-			logConfig.log.fileRotateType = testfileRotateType;
-			logConfig.log.silent = true;
+			logConfig.level = systemlogger.level.error;
+			logConfig.silent = true;
 
-			logging.setupLogConfig(logConfig);
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info', `Information Log Test`, {Detail: 'test'});
+			const fileConfig = {};
+			fileConfig.saveToFileName = `${TESTLOGFILE}.log`;
+			fileConfig.isFileRotate = true;
+			fileConfig.fileRotateType = testfileRotateType;
+
+			const logger = new Logger(logConfig, fileConfig);
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info', `Information Log Test`, {Detail: 'test'});
 			setTimeout(function() {
 				const outFilename = rotationSaveFile(`${TESTLOGFILE}.log`, testfileRotateType);
 				expect(fs.existsSync(outFilename)).to.equal(true);
@@ -297,20 +291,21 @@ describe('logging Tests', function() {
 		it(`Test fileTransport fileRotate with no exist or invalid fileRotateType`, function() {
 			const testfileRotateType = null;
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logConfig.log.saveToFileName = `${TESTLOGFILE}`;
-			logConfig.log.isFileRotate = true;
-			logConfig.log.fileRotateType = testfileRotateType;
-			logConfig.log.silent = true;
+			logConfig.level = systemlogger.level.error;
+			logConfig.silent = true;
 
-			logging.setupLogConfig(logConfig);
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info', `Information Log Test`, {Detail: 'test'});
+			const fileConfig = {};
+			fileConfig.saveToFileName = `${TESTLOGFILE}`;
+			fileConfig.isFileRotate = true;
+			fileConfig.fileRotateType = testfileRotateType;
+
+			const logger = new Logger(logConfig, fileConfig);
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info', `Information Log Test`, {Detail: 'test'});
 			setTimeout(function() {
-				const outFilename = rotationSaveFile(`${TESTLOGFILE}`, logging.fileRotateType.daily);
+				const outFilename = rotationSaveFile(`${TESTLOGFILE}`, systemlogger.fileRotateType.daily);
 				expect(fs.existsSync(outFilename)).to.equal(true);
 				fs.unlinkSync(outFilename);
 			}, DELAYTOCHECKTESTLOGFILE);
@@ -319,20 +314,21 @@ describe('logging Tests', function() {
 		it(`Test fileTransport fileRotate with no exist saveToFileName`, function() {
 			const testfileRotateType = null;
 			const logConfig = {};
-			logConfig.log = {};
-			logConfig.log.level = logging.level.error;
-			logConfig.log.saveToFileName = null;
-			logConfig.log.isFileRotate = true;
-			logConfig.log.fileRotateType = testfileRotateType;
-			logConfig.log.silent = true;
+			logConfig.level = systemlogger.level.error;
+			logConfig.silent = true;
 
-			logging.setupLogConfig(logConfig);
-			logging.log('info');
-			logging.log('verbose', 'test message');
-			logging.log('silly', null, {Detail: 'test'});
-			logging.log('info', `Information Log Test`, {Detail: 'test'});
+			const fileConfig = {};
+			fileConfig.saveToFileName = null;
+			fileConfig.isFileRotate = true;
+			fileConfig.fileRotateType = testfileRotateType;
+
+			const logger = new Logger(logConfig, fileConfig);
+			logger.log('info');
+			logger.log('verbose', 'test message');
+			logger.log('silly', null, {Detail: 'test'});
+			logger.log('info', `Information Log Test`, {Detail: 'test'});
 			setTimeout(function() {
-				const outFilename = `${rotationSaveFile(`./`, logging.fileRotateType.daily)}.log`;
+				const outFilename = `${rotationSaveFile(`./`, systemlogger.fileRotateType.daily)}.log`;
 				expect(fs.existsSync(outFilename)).to.equal(true);
 				fs.unlinkSync(outFilename);
 			}, DELAYTOCHECKTESTLOGFILE);

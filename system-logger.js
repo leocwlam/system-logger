@@ -23,13 +23,17 @@ const LOGFILEROTATE = {
 	minutely : 4
 };
 
-let externalSource = null;
-let silent = false;
-let externalDisplayFormat = null;
-let saveToFileName = null;
-let isFileRotate = false;
-let	fileRotateType = LOGFILEROTATE.daily;
-let fileRotateMaxSize = '1g';		   // add 'k', 'm', or 'g', as 100m
+const DEFAULTISFILEROTATE = false;
+const DEFAULTFILEROTATETYPE = LOGFILEROTATE.daily;
+const DEFAULTFILEROTATEMAXSIZE = '1g';		   // add 'k', 'm', or 'g', as 100m
+
+// let externalSource = null;
+// let silent = false;
+// let externalDisplayFormat = null;
+// let saveToFileName = null;
+// let isFileRotate = false;
+// let	fileRotateType = LOGFILEROTATE.daily;
+// let fileRotateMaxSize = '1g';		   // add 'k', 'm', or 'g', as 100m
 
 const converseLeveValue = function (level) {
 	let levelValue = 0;
@@ -107,7 +111,7 @@ function logFileRotateDatePattern(logRotateType) {
 	return result;
 }
 
-function fileTransport(filename, isRotate, logRotateType) {
+function fileTransport(filename, isRotate, logRotateType, fileRotateMaxSize) {
 	if (isRotate) {
 		let filenameFormat = './%DATE%.log';
 		if (filename !== null) {
@@ -132,16 +136,14 @@ function fileTransport(filename, isRotate, logRotateType) {
 	return null;
 }
 
-function generateWinstonLogger(level, newTransports) {
-	let customtransports = [new transports.Console({
+function generateLogger(level, externalDisplayFormat, silent, fileSetting) {
+    const customtransports = [new transports.Console({
 		name: 'console.info',
 		level: internalLevel(level),
-		showLevel: true
-    })];
-
-	if (!((newTransports === null) || (typeof newTransports === 'undefined'))) {
-		customtransports = newTransports;
-	}
+		format: format.colorize(),
+		handleExceptions: true,
+		humanReadableUnhandledException: true
+	})];
 
 	const displayFormat = printf(info => {
 		if (externalDisplayFormat !== null) {
@@ -162,7 +164,7 @@ function generateWinstonLogger(level, newTransports) {
 			return `${info.timestamp} ${info.level}: ${info.message} [Detail: ${errorDetail}]`;
 		}
 	});
-	const filetran =  fileTransport(saveToFileName, isFileRotate, fileRotateType);
+	const filetran =  fileTransport(fileSetting.saveToFileName, fileSetting.isFileRotate, fileSetting.fileRotateType, fileSetting.fileRotateMaxSize);
 	if(filetran !== null) {
 		customtransports.push(filetran);
 	}
@@ -178,8 +180,6 @@ function generateWinstonLogger(level, newTransports) {
 		});
 }
 
-let logger = generateWinstonLogger(LOGLEVEL.info);
-
 function optionalParser(optional) {
 	const result = [];
 
@@ -192,14 +192,13 @@ function optionalParser(optional) {
 	return result;
 }
 
-function internalLog(logMessage) {
+function internalLog(logger, logMessage) {
 	logger.log({level: logMessage.level, message: logMessage.message, optional: logMessage.optional});
 }
 
-function parseLogMessage(level, message, optional, callback) {
+function parseLogMessage(logger, level, message, optional, callback) {
 	const levelValue = converseLeveValue(level);
-
-	if (externalSource.levels.indexOf(levelValue) !== -1) {
+	if (logger.externalSource.levels.indexOf(levelValue) !== -1) {
 		const persistType = levelValue;
 		let persistMessage = null;
 		let persistDetail = null;
@@ -212,7 +211,7 @@ function parseLogMessage(level, message, optional, callback) {
 			try {
 				persistDetail = JSON.stringify(optional);
 			} catch(error) {
-				internalLog({level: 'error', message: `Fail To log ${optional}`, optional: error});
+				internalLog(logger, {level: 'error', message: `Fail To log ${optional}`, optional: error});
 			}
 			const optionalList = optionalParser(optional);
 			if (typeof optionalList['cid'] !== 'undefined') {
@@ -223,12 +222,12 @@ function parseLogMessage(level, message, optional, callback) {
 	}
 }
 
-function persistExternalSource (level, message, optional) {
+function persistExternalSource(logger, level, message, optional) {
 	return new Promise(function (resolve, reject) {
-		if ((externalSource !== null) && (externalSource.callback !== null) && (externalSource.connector !== null)) {
-			parseLogMessage(level, message, optional, async function(type, message, detail, cId) {
+		if ((logger.externalSource !== null) && (logger.externalSource.callback !== null) && (logger.externalSource.connector !== null)) {
+			parseLogMessage(logger, level, message, optional, async function(type, message, detail, cId) {
 				try {
-					await externalSource.callback(externalSource.connector, type, message, detail, cId);
+					await logger.externalSource.callback(logger.externalSource.connector, type, message, detail, cId);
 					resolve();
 				} catch (error) {
 					reject(error);
@@ -240,85 +239,105 @@ function persistExternalSource (level, message, optional) {
 	});
 }
 
-// e.g.
-// log('warn', 'No Result from Get method', {
-//                    Reason: 'No result return within the config timeout "' + config.timeout + '"'
-//                })
-const log = function (level, message, optional) {
-	internalLog({level: level, message: message, optional: optional});
-
-	return new Promise(async function (resolve) {
-		if (externalSource !== null) {
-			try {
-				await persistExternalSource(level, message, optional);
-			} catch (error) {
-				internalLog({level: 'error', message: `Fail To log ${message} to External Source`, optional: error});
-			}
-		}
-		resolve();
-	});
-};
-
-
-const overrideLogLevel = function (level) {
-	const customtransports = [new transports.Console({
-		level: internalLevel(level),
-		format: format.colorize(),
-		handleExceptions: true,
-		humanReadableUnhandledException: true
-	})];
-
-	logger = generateWinstonLogger(level, customtransports);
-};
-
-const overrideExternalSource = function (levels, connector, callback) {
+function overrideExternalSource(levels, connector, callback) {
+	const externalSource = {};
 	externalSource.levels = levels;
 	externalSource.connector = connector;
 	externalSource.callback = callback;
-};
+	return externalSource;
+}
 
-const setupLogConfig = function (config) {
-	silent = false;
-	if (!((config.log.silent === null) || (typeof config.log.silent === 'undefined'))) {
-		silent = config.log.silent;
+function fileConfiguration(config) {
+	const result = {
+		saveToFileName: null,
+		isFileRotate: DEFAULTISFILEROTATE,
+		fileRotateType: DEFAULTFILEROTATETYPE,
+		fileRotateMaxSize: DEFAULTFILEROTATEMAXSIZE		   // add 'k', 'm', or 'g', as 100m
+	};
+
+	if ((config === null) || (typeof config === 'undefined')) {
+		return result;
 	}
 
-	externalDisplayFormat = null;
-	if (!((config.log.externalDisplayFormat === null) || (typeof config.log.externalDisplayFormat === 'undefined'))) {
-		externalDisplayFormat = config.log.externalDisplayFormat;
+	if (!((config.saveToFileName === null) || (typeof config.saveToFileName === 'undefined') || (config.saveToFileName === ''))) {
+		result.saveToFileName = config.saveToFileName;
 	}
 
-	saveToFileName = null;
-	if (!((config.log.saveToFileName === null) || (typeof config.log.saveToFileName === 'undefined') || (config.log.saveToFileName === ''))) {
-		saveToFileName = config.log.saveToFileName;
+	if ((config.isFileRotate !== null) && (typeof config.isFileRotate === 'boolean')) {
+		result.isFileRotate = config.isFileRotate;
 	}
 
-	isFileRotate = false;
-	if ((config.log.isFileRotate !== null) && (typeof config.log.isFileRotate === 'boolean')) {
-		isFileRotate = config.log.isFileRotate;
-	}
-
-	fileRotateType = LOGFILEROTATE.daily;
 	// Calling logFileRotateDatePattern is only for validation
-	if (logFileRotateDatePattern(config.log.fileRotateType) !== null) {
-		fileRotateType = config.log.fileRotateType;
-	}
-	fileRotateMaxSize = '1g';		   // add 'k', 'm', or 'g', as 100m
-	if (!((config.log.fileRotateMaxSize === null) || (typeof config.log.fileRotateMaxSize === 'undefined') || (config.log.fileRotateMaxSize === ''))) {
-		fileRotateMaxSize = config.log.fileRotateMaxSize;
+	if (logFileRotateDatePattern(config.fileRotateType) !== null) {
+		result.fileRotateType = config.fileRotateType;
 	}
 
-	externalSource = null;
-	if (!((config.source === null) || (typeof config.source === 'undefined'))) {
-		externalSource = {};
-		overrideExternalSource(config.source.levels, config.source.connector, config.source.callback);
+	if (!((config.fileRotateMaxSize === null) || (typeof config.fileRotateMaxSize === 'undefined') || (config.fileRotateMaxSize === ''))) {
+		result.fileRotateMaxSize = config.fileRotateMaxSize;
+	}
+	return result;
+}
+
+function sourceConfiguration(config) {
+	let result = null;
+
+	if ((config === null) || (typeof config === 'undefined')) {
+		return result;
 	}
 
-	overrideLogLevel(config.log.level);
-};
+	result = overrideExternalSource(config.levels, config.connector, config.callback);
 
-module.exports.log = log;
+	return result;
+}
+
+class Logger {
+	constructor(config, fileConfig, sourceConfig) {
+		this.silent = false;
+		this.externalDisplayFormat = null;
+		this.fileConfig = null;
+		this.externalSource = null;
+		this.logger = null;
+		this.setupLogConfig(config, fileConfig, sourceConfig);
+	}
+
+	setupLogConfig(config, fileConfig, sourceConfig) {
+		this.silent = false;
+		if (!((config.silent === null) || (typeof config.silent === 'undefined'))) {
+			this.silent = config.silent;
+		}
+
+		this.externalDisplayFormat = null;
+		if (!((config.externalDisplayFormat === null) || (typeof config.externalDisplayFormat === 'undefined'))) {
+			this.externalDisplayFormat = config.externalDisplayFormat;
+		}
+
+		this.fileConfig = fileConfiguration(fileConfig);
+
+		this.externalSource = sourceConfiguration(sourceConfig);
+
+		this.logger = generateLogger(config.level, this.externalDisplayFormat, this.silent, this.fileConfig);
+	}
+
+	// e.g.
+	// log('warn', 'No Result from Get method', {
+	//                    Reason: 'No result return within the config timeout "' + config.timeout + '"'
+	//                })
+	log(level, message, optional) {
+		internalLog(this.logger, {level: level, message: message, optional: optional});
+		return new Promise(async (resolve) => {
+			if (this.externalSource !== null) {
+				try {
+					await persistExternalSource(this, level, message, optional);
+				} catch (error) {
+					internalLog(this.logger, {level: 'error', message: `Fail To log ${message} to External Source`, optional: error});
+				}
+			}
+			resolve();
+		});
+	}
+}
+
+module.exports.Logger = Logger;
 module.exports.level = LOGLEVEL;
 module.exports.fileRotateType = LOGFILEROTATE;
-module.exports.setupLogConfig = setupLogConfig;
 

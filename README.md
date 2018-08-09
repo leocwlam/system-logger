@@ -105,12 +105,12 @@ logger.log('info',`Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733b
 logger.log('error',`Fail Log Message`, {error: 'err message'});
 ```
 
-Need to file rotation
+Need to rotate log file
 ``` js
 const systemlogger = require('system-logger');
 const { Logger } = systemlogger;
 
-const logConfig = { level: systemlogger.level.info, silent: true };
+const logConfig = { level: systemlogger.level.info };
 const fileConfig = { saveToFileName: './track.log', isFileRotate: true, fileRotateType: systemlogger.fileRotateType.daily };
 
 const logger = new Logger(logConfig, fileConfig);
@@ -140,7 +140,7 @@ const logExternalCallBack = async function(connector, type, message, detail, cId
 };
 
 
-const logConfig = { level: systemlogger.level.info};
+const logConfig = { level: systemlogger.level.info };
 
 const mssql = require('mssql');
 const localhost = 'localhost';

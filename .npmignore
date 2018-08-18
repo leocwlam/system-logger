@@ -63,8 +63,20 @@ typings/
 # package-lock
 package-lock.json
 
-# dist
-dist/
-
 # Filter merge conflict file
 *.orig
+
+# src
+src/
+
+# tests
+tests/
+
+# linters
+.eslintrc
+
+# travis
+.travis.yml
+
+# git
+.gitignore

@@ -1,6 +1,7 @@
 # system-logger
 > Provide the basic logging mechanism.  It can be easy to inject the storage logic for those logging result.
 
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/leocwlam/system-logger/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/leocwlam/system-logger.svg?branch=master)](https://travis-ci.org/leocwlam/system-logger)
 [![Coverage Status](https://coveralls.io/repos/github/leocwlam/system-logger/badge.svg?branch=master)](https://coveralls.io/github/leocwlam/system-logger?branch=master)
 [![Dependency Status](https://david-dm.org/leocwlam/system-logger.svg)](https://david-dm.org/leocwlam/system-logger)
@@ -12,14 +13,17 @@
 
 
 # Contents
-* [Quick Start](#quick-start)
-* [Definition](#definition)
-* [Example](#example)
-	* [Get Start](#get-start)
-	* [Save to log file](#save-to-logfile)
-	* [Overwrite with message format](#overwrite-with-message-format)
-* [Use Case](#use-case)
-* [License](#license)
+-------
+
+<p align="center">
+    <a href="#quick-start">Quick Start</a> &bull;
+    <a href="#definition">Definition</a> &bull;
+    <a href="#example">Example</a> &bull;
+    <a href="#use-case">Use Case</a> &bull;
+    <a href="#license">License</a>
+</p>
+
+-------
 
 
 # <a name="quick-start"></a>Quick Start
@@ -160,3 +164,5 @@ pool.close();
 # <a name="license"></a>License
 MIT
 
+# Feedback
+Feedback is always welcome.

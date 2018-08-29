@@ -63,6 +63,8 @@ logger.log('debug', `Debug Log Message`, {action: {id: 123, name: 'tester'}})
 logger.log('silly', `Silly Log Message`)
 ```
 
+![Startup Output](https://raw.githubusercontent.com/leocwlam/system-logger/master/docs/startupExample.png)
+
 ## <a name="save-to-logfile"></a>Save to log file
 ``` js
 const systemlogger = require('system-logger')

@@ -52,14 +52,14 @@ const { Logger } = systemlogger
 const logConfig = { level: systemlogger.level.silly }
 const logger = new Logger(logConfig)
 
-logger.log('error', `Fail Log Message`, {error: 'err message'})
+logger.log('error', `Fail Log Message`, { error: 'err message' })
 logger.log('error', `Fail Log Message`, new Error('Timeout'))
 logger.log('error', `Fail Log Message`, [1, '1234'])
-logger.log('warn', `Warn Log Message`, {warn: 'Should not happening'})
+logger.log('warn', `Warn Log Message`, { warn: 'Should not happening' })
 logger.log('info', `Information Log Message`, 'test message')
-logger.log('info', `Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: {id: 879}})
-logger.log('verbose', `Verbose Log Message`, {event: {type: 'open', message: 'test'}})
-logger.log('debug', `Debug Log Message`, {action: {id: 123, name: 'tester'}})
+logger.log('info', `Information Log Message`, { cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: { id: 879 } })
+logger.log('verbose', `Verbose Log Message`, { event: { type: 'open', message: 'test' } })
+logger.log('debug', `Debug Log Message`, { action: { id: 123, name: 'tester' } })
 logger.log('silly', `Silly Log Message`)
 ```
 
@@ -75,7 +75,7 @@ const fileConfig = { saveToFileName: './track.log' }
 
 const logger = new Logger(logConfig, fileConfig)
 
-logger.log('info', `Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: {id: 879}})
+logger.log('info', `Information Log Message`, { cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: { id: 879 } })
 ```
 
 ##  <a name="overwrite-with-message-format"></a>Overwrite with message format
@@ -88,12 +88,12 @@ logConfig.externalDisplayFormat = (info) => {
   if ((info.optional === null) || (typeof info.optional === 'undefined')) {
     return `${info.timestamp} ${info.level}: ${info.message}`
   } else {
-    return `${info.timestamp} ${info.level}: ${info.message} [Detail: {cId: ${info.optional.cId}, actionId: ${info.optional.action.id}}]`
+    return `${info.timestamp} ${info.level}: ${info.message} [Detail: { cId: ${info.optional.cId}, actionId: ${info.optional.action.id} }]`
   }
 }
 const logger = new Logger(logConfig)
 
-logger.log('info', `Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: {id: 879}})
+logger.log('info', `Information Log Message`, { cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: { id: 879 } })
 ```
 
 # <a name="use-case"></a>Use Case
@@ -108,8 +108,8 @@ const fileConfig = { saveToFileName: './track.log' }
 const logger = new Logger(logConfig, fileConfig)
 
 // The following code will execute, but nothing will be logged.
-logger.log('info', `Information Log Message`, {cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: {id: 879}})
-logger.log('error', `Fail Log Message`, {error: 'err message'})
+logger.log('info', `Information Log Message`, { cId: '34a343a3-7cd0-4d88-a8ed-733ba36d3a3c', action: { id: 879 } })
+logger.log('error', `Fail Log Message`, { error: 'err message' })
 ```
 
 Need to rotate log file
@@ -121,7 +121,7 @@ const logConfig = { level: systemlogger.level.info }
 const fileConfig = { saveToFileName: './track.log', isFileRotate: true, fileRotateType: systemlogger.fileRotateType.daily }
 
 const logger = new Logger(logConfig, fileConfig)
-logger.log('info', `Information Log Tests`, {Detail: 'test'})
+logger.log('info', `Information Log Tests`, { Detail: 'test' })
 ```
 
 Need to persist to DB

@@ -185,7 +185,7 @@ function optionalParser (optional) {
 }
 
 function internalLog (logger, logMessage) {
-  logger.log({level: logMessage.level, message: logMessage.message, optional: logMessage.optional})
+  logger.log({ level: logMessage.level, message: logMessage.message, optional: logMessage.optional })
 }
 
 function parseLogMessage (logger, level, message, optional, callback) {
@@ -203,7 +203,7 @@ function parseLogMessage (logger, level, message, optional, callback) {
       try {
         persistDetail = JSON.stringify(optional)
       } catch (error) {
-        internalLog(logger, {level: 'error', message: `Fail To log ${optional}`, optional: error})
+        internalLog(logger, { level: 'error', message: `Fail To log ${optional}`, optional: error })
       }
       const optionalList = optionalParser(optional)
       if (typeof optionalList['cid'] !== 'undefined') {
@@ -315,13 +315,13 @@ class Logger {
   //                    Reason: 'No result return within the config timeout "' + config.timeout + '"'
   //                })
   log (level, message, optional) {
-    internalLog(this.logger, {level: level, message: message, optional: optional})
+    internalLog(this.logger, { level: level, message: message, optional: optional })
     return new Promise(async (resolve) => {
       if (this.externalSource !== null) {
         try {
           await persistExternalSource(this, level, message, optional)
         } catch (error) {
-          internalLog(this.logger, {level: 'error', message: `Fail To log ${message} to External Source`, optional: error})
+          internalLog(this.logger, { level: 'error', message: `Fail To log ${message} to External Source`, optional: error })
         }
       }
       resolve()

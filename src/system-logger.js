@@ -188,7 +188,7 @@ function internalLog (logger, logMessage) {
   logger.log({ level: logMessage.level, message: logMessage.message, optional: logMessage.optional })
 }
 
-function parseLogMessage (logger, level, message, optional, callback) {
+async function parseLogMessage (logger, level, message, optional, callback) {
   const levelValue = converseLeveValue(level)
   if (logger.externalSource.levels.indexOf(levelValue) !== -1) {
     const persistType = levelValue
@@ -210,24 +210,22 @@ function parseLogMessage (logger, level, message, optional, callback) {
         persistCId = optionalList['cid']
       }
     }
-    callback(persistType, persistMessage, persistDetail, persistCId)
+    await callback(persistType, persistMessage, persistDetail, persistCId)
   }
 }
 
 function persistExternalSource (logger, level, message, optional) {
-  return new Promise(function (resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     if ((logger.externalSource !== null) && (logger.externalSource.callback !== null) && (logger.externalSource.connector !== null)) {
-      parseLogMessage(logger, level, message, optional, async function (type, message, detail, cId) {
+      await parseLogMessage(logger, level, message, optional, async function (type, message, detail, cId) {
         try {
           await logger.externalSource.callback(logger.externalSource.connector, type, message, detail, cId)
-          resolve()
         } catch (error) {
           reject(error)
         }
       })
-    } else {
-      resolve()
     }
+    resolve()
   })
 }
 

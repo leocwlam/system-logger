@@ -173,12 +173,12 @@ function generateLogger (level, externalDisplayFormat, silent, fileSetting) {
 }
 
 function optionalParser (optional) {
-  const result = []
+  const result = {}
 
   if ((optional !== null) && (optional.cId !== null) && (typeof optional.cId !== 'undefined')) {
-    result['cid'] = optional.cId
+    result.cId = optional.cId
   } else if ((optional !== null) && (optional.cid !== null) && (typeof optional.cid !== 'undefined')) {
-    result['cid'] = optional.cid
+    result.cId = optional.cid
   }
 
   return result
@@ -188,7 +188,7 @@ function internalLog (logger, logMessage) {
   logger.log({ level: logMessage.level, message: logMessage.message, optional: logMessage.optional })
 }
 
-async function parseLogMessage (logger, level, message, optional, callback) {
+async function parseLogMessage (logger, level, message, optional, complete, callback) {
   const levelValue = converseLeveValue(level)
   if (logger.externalSource.levels.indexOf(levelValue) !== -1) {
     const persistType = levelValue
@@ -206,26 +206,30 @@ async function parseLogMessage (logger, level, message, optional, callback) {
         internalLog(logger, { level: 'error', message: `Fail To log ${optional}`, optional: error })
       }
       const optionalList = optionalParser(optional)
-      if (typeof optionalList['cid'] !== 'undefined') {
-        persistCId = optionalList['cid']
+      if (typeof optionalList.cId !== 'undefined') {
+        persistCId = optionalList.cId
       }
     }
     await callback(persistType, persistMessage, persistDetail, persistCId)
   }
+  complete()
 }
 
 function persistExternalSource (logger, level, message, optional) {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     if ((logger.externalSource !== null) && (logger.externalSource.callback !== null) && (logger.externalSource.connector !== null)) {
-      await parseLogMessage(logger, level, message, optional, async function (type, message, detail, cId) {
+      parseLogMessage(logger, level, message, optional, resolve, async function (type, message, detail, cId) {
         try {
           await logger.externalSource.callback(logger.externalSource.connector, type, message, detail, cId)
         } catch (error) {
           reject(error)
         }
+      }).then(() => {
+        resolve()
       })
+    } else {
+      resolve()
     }
-    resolve()
   })
 }
 
@@ -314,15 +318,16 @@ class Logger {
   //                })
   log (level, message, optional) {
     internalLog(this.logger, { level: level, message: message, optional: optional })
-    return new Promise(async (resolve) => {
+    return new Promise((resolve) => {
       if (this.externalSource !== null) {
-        try {
-          await persistExternalSource(this, level, message, optional)
-        } catch (error) {
-          internalLog(this.logger, { level: 'error', message: `Fail To log ${message} to External Source`, optional: error })
-        }
+        persistExternalSource(this, level, message, optional)
+          .then(() => {
+            resolve()
+          }).catch((error) => {
+            internalLog(this.logger, { level: 'error', message: `Fail To log ${message} to External Source`, optional: error })
+            resolve()
+          })
       }
-      resolve()
     })
   }
 }

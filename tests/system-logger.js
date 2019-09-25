@@ -76,9 +76,9 @@ describe('logging Tests', function () {
       logger.log('info', 'test message', 'test')
       logger.log('info', 'test message', 123)
       logger.log('info', 'test message', [123, 'test'])
-      logger.log('info', `Simple Log Test`, { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
-      logger.log('warn', `Simple Log Test`, { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
-      logger.log('debug', `Simple Log Test`)
+      logger.log('info', 'Simple Log Test', { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('warn', 'Simple Log Test', { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('debug', 'Simple Log Test')
     })
 
     it('Testing logging with object', function () {
@@ -108,16 +108,16 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Simple Log Test`, { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
-      logger.log('warn', `Simple Log Test`, { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('info', 'Simple Log Test', { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('warn', 'Simple Log Test', { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
 
       logger.setupLogConfig(logConfig)
 
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Simple Log Test`, { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
-      logger.log('warn', `Simple Log Test`, { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('info', 'Simple Log Test', { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('warn', 'Simple Log Test', { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
 
       setTimeout(function () {
         expect(fs.existsSync(TESTLOGFILE)).to.equal(true)
@@ -136,8 +136,8 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Simple Log Test`, { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
-      logger.log('warn', `Simple Log Test`, { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('info', 'Simple Log Test', { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('warn', 'Simple Log Test', { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
     })
 
     it('Testing logging with external source without calling to callback (no connector)', function () {
@@ -150,7 +150,7 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Information Log Test`, { Detail: 'test' })
+      logger.log('info', 'Information Log Test', { Detail: 'test' })
     })
 
     // This test will make internal fail, it will call EventEmitter memory leak.
@@ -168,8 +168,8 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, errorOptional)
-      logger.log('info', `Information Log Test`, errorOptional)
-      logger.log('debug', `debug Log Test`)
+      logger.log('info', 'Information Log Test', errorOptional)
+      logger.log('debug', 'debug Log Test')
     })
 
     it('Testing logging with external source with fail on external save processing', function () {
@@ -184,8 +184,8 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Information Log Test`, { Detail: 'test' })
-      logger.log('error', `Fail Log Test`, { Error: 'test' })
+      logger.log('info', 'Information Log Test', { Detail: 'test' })
+      logger.log('error', 'Fail Log Test', { Error: 'test' })
     })
 
     it('Test custom display message', function () {
@@ -202,7 +202,7 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Information Log Test`, { Detail: 'test' })
+      logger.log('info', 'Information Log Test', { Detail: 'test' })
     })
 
     describe('Test fileTransport behavior', function () {
@@ -231,7 +231,7 @@ describe('logging Tests', function () {
           logger.log('info')
           logger.log('verbose', 'test message')
           logger.log('silly', null, { Detail: 'test' })
-          logger.log('info', `Information Log Test`, { Detail: 'test' })
+          logger.log('info', 'Information Log Test', { Detail: 'test' })
           setTimeout(function () {
             const outFilename = rotationSaveFile(filename, fileRotateType)
             expect(fs.existsSync(outFilename)).to.equal(true)
@@ -241,7 +241,7 @@ describe('logging Tests', function () {
       })
     })
 
-    it(`Test fileTransport fileRotate and file without extension`, function () {
+    it('Test fileTransport fileRotate and file without extension', function () {
       const testfileRotateType = systemlogger.fileRotateType.monthly
       const logConfig = {}
       logConfig.level = systemlogger.level.error
@@ -257,7 +257,7 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Information Log Test`, { Detail: 'test' })
+      logger.log('info', 'Information Log Test', { Detail: 'test' })
       setTimeout(function () {
         const outFilename = rotationSaveFile(TESTLOGFILE, testfileRotateType)
         expect(fs.existsSync(outFilename)).to.equal(true)
@@ -265,7 +265,7 @@ describe('logging Tests', function () {
       }, DELAYTOCHECKTESTLOGFILE)
     })
 
-    it(`Test fileTransport fileRotate and file with extension`, function () {
+    it('Test fileTransport fileRotate and file with extension', function () {
       const testfileRotateType = systemlogger.fileRotateType.monthly
       const logConfig = {}
       logConfig.level = systemlogger.level.error
@@ -280,7 +280,7 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Information Log Test`, { Detail: 'test' })
+      logger.log('info', 'Information Log Test', { Detail: 'test' })
       setTimeout(function () {
         const outFilename = rotationSaveFile(`${TESTLOGFILE}.log`, testfileRotateType)
         expect(fs.existsSync(outFilename)).to.equal(true)
@@ -288,7 +288,7 @@ describe('logging Tests', function () {
       }, DELAYTOCHECKTESTLOGFILE)
     })
 
-    it(`Test fileTransport fileRotate with no exist or invalid fileRotateType`, function () {
+    it('Test fileTransport fileRotate with no exist or invalid fileRotateType', function () {
       const testfileRotateType = null
       const logConfig = {}
       logConfig.level = systemlogger.level.error
@@ -303,7 +303,7 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Information Log Test`, { Detail: 'test' })
+      logger.log('info', 'Information Log Test', { Detail: 'test' })
       setTimeout(function () {
         const outFilename = rotationSaveFile(`${TESTLOGFILE}`, systemlogger.fileRotateType.daily)
         expect(fs.existsSync(outFilename)).to.equal(true)
@@ -311,7 +311,7 @@ describe('logging Tests', function () {
       }, DELAYTOCHECKTESTLOGFILE)
     })
 
-    it(`Test fileTransport fileRotate with no exist saveToFileName`, function () {
+    it('Test fileTransport fileRotate with no exist saveToFileName', function () {
       const testfileRotateType = null
       const logConfig = {}
       logConfig.level = systemlogger.level.error
@@ -326,9 +326,9 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', `Information Log Test`, { Detail: 'test' })
+      logger.log('info', 'Information Log Test', { Detail: 'test' })
       setTimeout(function () {
-        const outFilename = `${rotationSaveFile(`./`, systemlogger.fileRotateType.daily)}.log`
+        const outFilename = `${rotationSaveFile('./', systemlogger.fileRotateType.daily)}.log`
         expect(fs.existsSync(outFilename)).to.equal(true)
         fs.unlinkSync(outFilename)
       }, DELAYTOCHECKTESTLOGFILE)

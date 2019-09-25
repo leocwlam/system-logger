@@ -324,9 +324,11 @@ class Logger {
           .then(() => {
             resolve()
           }).catch((error) => {
-            internalLog(this.logger, { level: 'error', message: `Fail To log ${message} to External Source`, optional: error })
+            internalLog(this.logger, { level: 'error', message: `Fail To log ${message} to External Source`, optional, error })
             resolve()
           })
+      } else {
+        resolve()
       }
     })
   }

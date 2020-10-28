@@ -30,7 +30,7 @@
     "dateformat": "^3.0.3",
     "mocha": "^8.2.0",
     "nyc": "^15.1.0",
-    "semantic-release": "^17.0.8",
+    "semantic-release": "^17.2.1",
     "standard": "^15.0.0",
     "uglify-es": "^3.3.9"
   }

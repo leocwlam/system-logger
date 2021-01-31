@@ -27,7 +27,7 @@ function rotationSaveFile (filename, fileRotateType) {
       result = filenameFormat.replace('%DATE%', dateFormat(new Date(), 'yyyy-mm'))
       break
     case systemlogger.fileRotateType.weekly:
-      result = filenameFormat.replace('%DATE%', dateFormat(new Date(), 'yyyy- W')).replace(' ', 'W')
+      result = filenameFormat.replace('%DATE%', dateFormat(new Date(), 'yyyy- WW')).replace(' ', 'W')
       break
     case systemlogger.fileRotateType.daily:
       result = filenameFormat.replace('%DATE%', dateFormat(new Date(), 'yyyy-mm-dd'))

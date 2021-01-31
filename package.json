@@ -20,6 +20,11 @@
     "url": "https://github.com/leocwlam/system-logger/issues"
   },
   "homepage": "https://github.com/leocwlam/system-logger#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "standard && pretty-quick --staged"
+    }
+  },
   "dependencies": {
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
@@ -29,8 +34,11 @@
     "coveralls": "^3.1.0",
     "dateformat": "^4.5.1",
     "eslint": "^7.18.0",
+    "husky": "^4.3.8",
     "mocha": "^8.2.0",
     "nyc": "^15.1.0",
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0",
     "semantic-release": "^17.3.7",
     "standard": "^16.0.3",
     "uglify-es": "^3.3.10"

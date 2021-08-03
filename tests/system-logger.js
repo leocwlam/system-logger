@@ -1,5 +1,6 @@
 'use strict'
 /* eslint-env mocha */
+process.setMaxListeners(0)
 
 const fs = require('fs')
 const chai = require('chai')
@@ -19,24 +20,38 @@ function rotationSaveFile (filename, fileRotateType) {
   const locationExt = filename.lastIndexOf('.')
   let filenameFormat = `${filename}%DATE%`
   if (locationExt > 0) {
-    filenameFormat = `${filename.slice(0, locationExt)}%DATE%${filename.slice(locationExt)}`
+    filenameFormat = `${filename.slice(0, locationExt)}%DATE%${filename.slice(
+      locationExt
+    )}`
   }
   let result = ''
   switch (fileRotateType) {
     case systemlogger.fileRotateType.monthly:
-      result = filenameFormat.replace('%DATE%', dateFormat(new Date(), 'yyyy-mm'))
+      result = filenameFormat.replace(
+        '%DATE%',
+        dateFormat(new Date(), 'yyyy-mm')
+      )
       break
     case systemlogger.fileRotateType.weekly:
-      result = filenameFormat.replace('%DATE%', dateFormat(new Date(), 'yyyy- WW')).replace(' ', 'W')
+      result = filenameFormat
+        .replace('%DATE%', dateFormat(new Date(), 'yyyy- WW'))
+        .replace(' ', 'W')
       break
     case systemlogger.fileRotateType.daily:
-      result = filenameFormat.replace('%DATE%', dateFormat(new Date(), 'yyyy-mm-dd'))
+      result = filenameFormat.replace(
+        '%DATE%',
+        dateFormat(new Date(), 'yyyy-mm-dd')
+      )
       break
     case systemlogger.fileRotateType.hourly:
-      result = filenameFormat.replace('%DATE%', dateFormat(new Date(), 'yyyy-mm-dd HH')).replace(' ', 'T')
+      result = filenameFormat
+        .replace('%DATE%', dateFormat(new Date(), 'yyyy-mm-dd HH'))
+        .replace(' ', 'T')
       break
     case systemlogger.fileRotateType.minutely:
-      result = filenameFormat.replace('%DATE%', dateFormat(new Date(), 'yyyy-mm-dd HH_MM')).replace(' ', 'T')
+      result = filenameFormat
+        .replace('%DATE%', dateFormat(new Date(), 'yyyy-mm-dd HH_MM'))
+        .replace(' ', 'T')
       break
   }
   return result
@@ -76,8 +91,14 @@ describe('logging Tests', function () {
       logger.log('info', 'test message', 'test')
       logger.log('info', 'test message', 123)
       logger.log('info', 'test message', [123, 'test'])
-      logger.log('info', 'Simple Log Test', { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
-      logger.log('warn', 'Simple Log Test', { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('info', 'Simple Log Test', {
+        Detail: 'test',
+        cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350'
+      })
+      logger.log('warn', 'Simple Log Test', {
+        Detail: 'test',
+        cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350'
+      })
       logger.log('debug', 'Simple Log Test')
     })
 
@@ -108,16 +129,28 @@ describe('logging Tests', function () {
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', 'Simple Log Test', { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
-      logger.log('warn', 'Simple Log Test', { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('info', 'Simple Log Test', {
+        Detail: 'test',
+        cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350'
+      })
+      logger.log('warn', 'Simple Log Test', {
+        Detail: 'test',
+        cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350'
+      })
 
       logger.setupLogConfig(logConfig)
 
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', 'Simple Log Test', { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
-      logger.log('warn', 'Simple Log Test', { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('info', 'Simple Log Test', {
+        Detail: 'test',
+        cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350'
+      })
+      logger.log('warn', 'Simple Log Test', {
+        Detail: 'test',
+        cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350'
+      })
 
       setTimeout(function () {
         expect(fs.existsSync(TESTLOGFILE)).to.equal(true)
@@ -130,14 +163,28 @@ describe('logging Tests', function () {
       logConfig.level = systemlogger.level.error
 
       const externalSource = new testHelper.MockExternalSource()
-      const sourceConfig = { levels: [systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: externalSource.connector, callback: externalSource.save }
+      const sourceConfig = {
+        levels: [
+          systemlogger.level.error,
+          systemlogger.level.warn,
+          systemlogger.level.info
+        ],
+        connector: externalSource.connector,
+        callback: externalSource.save
+      }
       const logger = new Logger(logConfig, null, sourceConfig)
 
       logger.log('info')
       logger.log('verbose', 'test message')
       logger.log('silly', null, { Detail: 'test' })
-      logger.log('info', 'Simple Log Test', { Detail: 'test', cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
-      logger.log('warn', 'Simple Log Test', { Detail: 'test', cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350' })
+      logger.log('info', 'Simple Log Test', {
+        Detail: 'test',
+        cid: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350'
+      })
+      logger.log('warn', 'Simple Log Test', {
+        Detail: 'test',
+        cId: '9c4f5aba-6cb5-4b06-aa50-d6718a41f350'
+      })
     })
 
     it('Testing logging with external source without calling to callback (no connector)', function () {
@@ -145,7 +192,15 @@ describe('logging Tests', function () {
       logConfig.level = systemlogger.level.error
 
       const externalSource = new testHelper.MockExternalSource()
-      const sourceConfig = { levels: [systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: null, callback: externalSource.save }
+      const sourceConfig = {
+        levels: [
+          systemlogger.level.error,
+          systemlogger.level.warn,
+          systemlogger.level.info
+        ],
+        connector: null,
+        callback: externalSource.save
+      }
       const logger = new Logger(logConfig, null, sourceConfig)
       logger.log('info')
       logger.log('verbose', 'test message')
@@ -153,14 +208,22 @@ describe('logging Tests', function () {
       logger.log('info', 'Information Log Test', { Detail: 'test' })
     })
 
-    // This test will make internal fail, it will call EventEmitter memory leak.
+    // This test will make internal fail
     it('Testing logging with external source with fail on processing optional', function () {
       const logConfig = {}
       logConfig.level = systemlogger.level.error
       logConfig.silent = true
 
       const externalSource = new testHelper.MockExternalSource()
-      const sourceConfig = { levels: [systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: externalSource.connector, callback: externalSource.save }
+      const sourceConfig = {
+        levels: [
+          systemlogger.level.error,
+          systemlogger.level.warn,
+          systemlogger.level.info
+        ],
+        connector: externalSource.connector,
+        callback: externalSource.save
+      }
       const logger = new Logger(logConfig, null, sourceConfig)
 
       const errorOptional = {}
@@ -178,7 +241,15 @@ describe('logging Tests', function () {
       logConfig.silent = true
 
       const externalSource = new testHelper.MockExternalSource()
-      const sourceConfig = { levels: [systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: externalSource.connector, callback: externalSource.saveFail }
+      const sourceConfig = {
+        levels: [
+          systemlogger.level.error,
+          systemlogger.level.warn,
+          systemlogger.level.info
+        ],
+        connector: externalSource.connector,
+        callback: externalSource.saveFail
+      }
       const logger = new Logger(logConfig, null, sourceConfig)
 
       logger.log('info')
@@ -193,10 +264,20 @@ describe('logging Tests', function () {
       logConfig.level = systemlogger.level.error
       logConfig.silent = false
       // logConfig.externalDisplayFormat = (info) => { return `${info.timestamp} ${info.level}: ${info.message}`;};
-      logConfig.externalDisplayFormat = (info) => { return '' } // No Show anything on console, but we still test function overwritten
+      logConfig.externalDisplayFormat = (info) => {
+        return ''
+      } // No Show anything on console, but we still test function overwritten
 
       const externalSource = new testHelper.MockExternalSource()
-      const sourceConfig = { levels: [systemlogger.level.error, systemlogger.level.warn, systemlogger.level.info], connector: externalSource.connector, callback: externalSource.saveFail }
+      const sourceConfig = {
+        levels: [
+          systemlogger.level.error,
+          systemlogger.level.warn,
+          systemlogger.level.info
+        ],
+        connector: externalSource.connector,
+        callback: externalSource.saveFail
+      }
       const logger = new Logger(logConfig, null, sourceConfig)
 
       logger.log('info')
@@ -282,7 +363,10 @@ describe('logging Tests', function () {
       logger.log('silly', null, { Detail: 'test' })
       logger.log('info', 'Information Log Test', { Detail: 'test' })
       setTimeout(function () {
-        const outFilename = rotationSaveFile(`${TESTLOGFILE}.log`, testfileRotateType)
+        const outFilename = rotationSaveFile(
+          `${TESTLOGFILE}.log`,
+          testfileRotateType
+        )
         expect(fs.existsSync(outFilename)).to.equal(true)
         fs.unlinkSync(outFilename)
       }, DELAYTOCHECKTESTLOGFILE)
@@ -305,7 +389,10 @@ describe('logging Tests', function () {
       logger.log('silly', null, { Detail: 'test' })
       logger.log('info', 'Information Log Test', { Detail: 'test' })
       setTimeout(function () {
-        const outFilename = rotationSaveFile(`${TESTLOGFILE}`, systemlogger.fileRotateType.daily)
+        const outFilename = rotationSaveFile(
+          `${TESTLOGFILE}`,
+          systemlogger.fileRotateType.daily
+        )
         expect(fs.existsSync(outFilename)).to.equal(true)
         fs.unlinkSync(outFilename)
       }, DELAYTOCHECKTESTLOGFILE)
@@ -328,7 +415,10 @@ describe('logging Tests', function () {
       logger.log('silly', null, { Detail: 'test' })
       logger.log('info', 'Information Log Test', { Detail: 'test' })
       setTimeout(function () {
-        const outFilename = `${rotationSaveFile('./', systemlogger.fileRotateType.daily)}.log`
+        const outFilename = `${rotationSaveFile(
+          './',
+          systemlogger.fileRotateType.daily
+        )}.log`
         expect(fs.existsSync(outFilename)).to.equal(true)
         fs.unlinkSync(outFilename)
       }, DELAYTOCHECKTESTLOGFILE)

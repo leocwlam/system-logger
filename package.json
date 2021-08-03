@@ -5,9 +5,11 @@
   "main": "dist/system-logger.min.js",
   "scripts": {
     "test": "standard && nyc --reporter=html --reporter=text mocha tests",
-    "test-continue": "mocha tests --recursive --watch",
+    "test:watch": "mocha tests --recursive --watch --trace-warnings",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "build": "uglifyjs src/*.js -c -m -o dist/system-logger.min.js --source-map \"filename='dist/system-logger.min.js.map'\""
+    "build": "uglifyjs src/*.js -c -m -o dist/system-logger.min.js --source-map \"filename='dist/system-logger.min.js.map'\"",
+    "prepare": "husky install",
+    "pre-commit": "standard && pretty-quick --staged"
   },
   "repository": {
     "type": "git",
@@ -20,11 +22,6 @@
     "url": "https://github.com/leocwlam/system-logger/issues"
   },
   "homepage": "https://github.com/leocwlam/system-logger#readme",
-  "husky": {
-    "hooks": {
-      "pre-commit": "standard && pretty-quick --staged"
-    }
-  },
   "dependencies": {
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
@@ -34,8 +31,8 @@
     "coveralls": "^3.1.0",
     "dateformat": "^4.5.1",
     "eslint": "^7.18.0",
-    "husky": "^4.3.8",
-    "mocha": "^8.2.1",
+    "husky": "^7.0.1",
+    "mocha": "^9.0.3",
     "nyc": "^15.1.0",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",

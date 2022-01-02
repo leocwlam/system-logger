@@ -3,7 +3,7 @@
 > Provide the basic logging mechanism. It can be easy to inject the storage logic for those logging result.
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/leocwlam/system-logger/blob/master/LICENSE)
-[![Build Status](https://travis-ci.com/leocwlam/system-logger.svg?branch=master)](https://travis-ci.com/leocwlam/system-logger)
+[![Build Status](https://api.travis-ci.com/leocwlam/system-logger.svg?branch=master)](https://app.travis-ci.com/leocwlam/system-logger)
 [![Coverage Status](https://coveralls.io/repos/github/leocwlam/system-logger/badge.svg?branch=master)](https://coveralls.io/github/leocwlam/system-logger?branch=master)
 [![Dependency Status](https://david-dm.org/leocwlam/system-logger.svg)](https://david-dm.org/leocwlam/system-logger)
 [![devDependency Status](https://david-dm.org/leocwlam/system-logger/dev-status.svg)](https://david-dm.org/leocwlam/system-logger?type=dev)
